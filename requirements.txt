@@ -5,3 +5,5 @@ joblib
 scipy
 streamlit
 typing
+pandas
+numpy
