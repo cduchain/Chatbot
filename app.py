@@ -50,12 +50,6 @@ def run_main_streamlit(
         "Slider 3 - Stel een waarde in voor het aantal alarmsignalen.", 
         min_value=0, max_value=20, value=1, step=1)
 
-    st.write(f"User input: {user_input}")
-    st.write(f"Slider 1 value: {slider_1}")
-    st.write(f"Slider 2 value: {slider_2}")
-    st.write(f"Slider 3 value: {slider_3}")
-
-    
     if user_input.lower() == "exit":
         st.write("Tot ziens!")
         return
