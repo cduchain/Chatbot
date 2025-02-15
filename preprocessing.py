@@ -5,7 +5,7 @@ import re
 def clean_dataframe(df: pd.DataFrame) -> pd.DataFrame:
     # Apply to all string columns in the DataFrame
     for column in df.select_dtypes(include=['object']).columns:
-        df[column] = df[column].apply(lambda x: re.sub(r'[\x00-\x1F\x7F\xA0]', '', str(x)) if isinstance(x, str) else x)
+        df[column] = df[column].apply(lambda x: re.sub(r'[\x00-\x1F\x7F\xA0\xa0]', '', str(x)) if isinstance(x, str) else x)
     return df
 
 def preprocess_data(data_file: str, signal_file: str, domein_file: str, slider_1, slider_2, slider_3) -> pd.DataFrame:
