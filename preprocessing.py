@@ -2,10 +2,22 @@ import pandas as pd
 import json
 import re
 
+def clean_item(item):
+    # If the item is a list, recursively clean each element.
+    if isinstance(item, list):
+        return [clean_item(subitem) for subitem in item]
+    # If it's a string, clean it.
+    elif isinstance(item, str):
+        # Use Unicode escapes to remove non-breaking spaces and other control characters.
+        cleaned = re.sub(r'[\u0000-\u001F\u007F\u00A0]', '', item)
+        return cleaned.strip()
+    else:
+        return item
+
 def clean_dataframe(df: pd.DataFrame) -> pd.DataFrame:
-    # Apply to all string columns in the DataFrame
     for column in df.select_dtypes(include=['object']).columns:
-        df[column] = df[column].apply(lambda x: re.sub(r'[\x00-\x1F\x7F\xA0\xa0]', '', str(x)) if isinstance(x, str) else x)
+        # Apply cleaning function to each cell in the column.
+        df[column] = df[column].apply(clean_item)
     return df
 
 def preprocess_data(data_file: str, signal_file: str, domein_file: str, slider_1, slider_2, slider_3) -> pd.DataFrame:
