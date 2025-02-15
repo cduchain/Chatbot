@@ -55,7 +55,7 @@ def extract_threshold_from_question(question):
     return None
 
 def extract_signal_in_question(question: str, signal_df: pd.DataFrame) -> str:
-    for signal in signal_df['Signal']:
+    for signal in signal_df['Vraag']:
         if signal in question:
             return signal
     return None
