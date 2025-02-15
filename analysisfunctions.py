@@ -54,9 +54,11 @@ def extract_threshold_from_question(question):
         return int(match.group(1))
     return None
 
-def extract_signal_in_question(text: str):
-    words_in_quotes = re.findall(r"'([^']*)'", text)
-    return words_in_quotes
+def extract_signal_in_question(question: str, signal_df: pd.DataFrame) -> str:
+    for signal in signal_df['Signal']:
+        if signal in question:
+            return signal
+    return None
 
 #frequency questions
 def analyze_freq_relatie(data: pd.DataFrame, specific_question, signal_df: pd.DataFrame) -> pd.DataFrame:
@@ -1798,5 +1800,19 @@ def dalen_freq(data: pd.DataFrame, specific_question, signal_df: pd.DataFrame) -
         return pd.DataFrame(columns=['Signal', 'Age', 'Frequency'])
     return result_df
 
-
+def time_sign_frame(data: pd.DataFrame, specific_question: str, signal_df: pd.DataFrame) -> pd.DataFrame:
+    signal = extract_signal_in_question(specific_question, signal_df)
+    if signal is None:
+        raise ValueError("Geen signaal gevonden in de zin. Check of het zeker juist geschreven is.")
+    signal_info = signal_df[signal_df['Signal'] == signal]
+    min_age = signal_info['Minimum leeftijd'].values[0]
+    max_age = signal_info['Maximum leeftijd'].values[0]
+    months = list(range(min_age, max_age + 1))
+    result_df = pd.DataFrame({'Month': months, 'Count': [0] * len(months)})
+    for _, row in data.iterrows():
+        if signal in row['signals']: 
+            age_months = row['age_months']
+            if min_age <= age_months <= max_age:
+                result_df.loc[result_df['Month'] == age_months, 'Count'] += 1
+    return result_df
 
