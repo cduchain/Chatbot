@@ -1804,7 +1804,7 @@ def time_sign_frame(data: pd.DataFrame, specific_question: str, signal_df: pd.Da
     signal = extract_signal_in_question(specific_question, signal_df)
     if signal is None:
         raise ValueError("Geen signaal gevonden in de zin. Check of het zeker juist geschreven is.")
-    signal_info = signal_df[signal_df['Signal'] == signal]
+    signal_info = signal_df[signal_df['Vraag'] == signal]
     min_age = signal_info['Minimum leeftijd'].values[0]
     max_age = signal_info['Maximum leeftijd'].values[0]
     months = list(range(min_age, max_age + 1))
