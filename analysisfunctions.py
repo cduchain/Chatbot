@@ -17,6 +17,12 @@ def extract_number_from_alarm_question(question: str) -> int:
         return int(match.group(1))  
     return None
 
+def extract_number_from_signal_question(question: str) -> int:
+    match = re.search(r"(\d+)\s*(signaal|signalen)", question, re.IGNORECASE)
+    if match:
+        return int(match.group(1))  
+    return None
+
 def extract_percentage_from_question(question):
     match = re.search(r"(\d+)\s*(procent|%)", question, re.IGNORECASE)
     if match:
@@ -30,6 +36,11 @@ def extract_months_from_question(question: str):
         number2 = int(match.group(2))
         return number1, number2
     match = re.search(r'(\d+)\s*en\s*(\d+)\s*maanden', question, re.IGNORECASE)
+    if match:
+        number1 = int(match.group(1))
+        number2 = int(match.group(2))
+        return number1, number2 
+    match = re.search(r'(\d+)\s*tot\s*(\d+)\s*maanden', question, re.IGNORECASE)
     if match:
         number1 = int(match.group(1))
         number2 = int(match.group(2))
@@ -55,9 +66,42 @@ def extract_threshold_from_question(question):
     return None
 
 def extract_signal_in_question(question: str, signal_df: pd.DataFrame) -> str:
-    for signal in signal_df['Vraag']:
+    for signal in signal_df['Signal']:
         if signal in question:
             return signal
+    return None
+
+def extract_relatie_in_question(question: str) -> str:
+    relaties = ['ouder', 'kinderbegeleider of verantwoordelijke kinderopvang', 'clb', 'leerkracht', 
+                'psycholoog, orthopedagoog, logopedist, kinesitherapeut, ergotherapeut, thuisbegeleider',
+                'huisarts', 'familie', 'zorgcoördinator of zorgleerkracht', 'ander', 'andere arts', 
+                'kind&gezin', 'andere functie op school', 'pediater']
+    for relatie in relaties:
+        if relatie in question:
+            return relatie
+    return None
+
+def extract_stoornis_in_question(question: str) -> str:
+    mapping = {
+        'taalontwikkelingsprobleem': 'language disorder',
+        'taalontwikkelingsproblemen': 'language disorder',
+        'taalontwikkelingsstoornis': 'language disorder',
+        'taalontwikkelingstoornissen': 'language disorder',
+        'motorische ontwikkelingproblemen': 'motoric disorder',
+        'motorisch ontwikkelingsprobleem': 'motoric disorder',
+        'motorische ontwikkelingsstoornis': 'motoric disorder',
+        'motorische ontwikkelingsstoornissen': 'motoric disorder',
+        'autisme': 'autism'}
+    for key in mapping:
+        if re.search(rf'\b{re.escape(key)}\b', question, re.IGNORECASE):
+            return mapping[key]
+    return None
+
+def extract_domein_in_question(question: str) -> str:
+    domeinen = ['taal en/of communicatie', 'motoriek', 'sociale vaardigheden', 'gedrag en spel']
+    for domein in domeinen:
+        if domein in question:
+            return domein
     return None
 
 #frequency questions
@@ -67,22 +111,23 @@ def analyze_freq_relatie(data: pd.DataFrame, specific_question, signal_df: pd.Da
     result_df = pd.DataFrame({
         "Relatie": relation_types.index,
         "Aantal keer gekozen": relation_types.values,
-        "Percentage (%)": (relation_types.values / total_entries) * 100})
-    result_df["Percentage (%)"] = result_df["Percentage (%)"].round(2)
+        "Percentage gekozen keren (%)": (relation_types.values / total_entries) * 100})
+    result_df["Percentage gekozen keren (%)"] = result_df["Percentage gekozen keren (%)"].round(2)
     return result_df
 
 def analyze_freq_signaal(data: pd.DataFrame, specific_question, signal_df: pd.DataFrame) -> pd.DataFrame:
     result_df = signal_df[['Vraag', 'Aantal keer zichtbaar', 'Percentage gekozen keren']].copy()
-    result_df.columns = ['Signaal', 'Aantal keer zichtbaar', 'Percentage (%)']
-    result_df["Percentage (%)"] = result_df["Percentage (%)"].round(2)
-    result_df = result_df.sort_values(by='Percentage (%)', ascending=False)
+    result_df.columns = ['Signaal', 'Aantal keer zichtbaar', 'Percentage gekozen keren (%)']
+    result_df["Percentage gekozen keren (%)"] = result_df["Percentage gekozen keren (%)"].round(2)
+    result_df = result_df.sort_values(by='Percentage gekozen keren (%)', ascending=False)
     return result_df
 
 def analyze_freq_alarmsignaal(data: pd.DataFrame, specific_question, signal_df: pd.DataFrame) -> pd.DataFrame:
     alarm_signals = signal_df[signal_df['Is een alarmsignaal'] == True]
     result_df = alarm_signals[['Vraag', 'Aantal keer zichtbaar', 'Percentage gekozen keren']].copy()
-    result_df.columns = ['Alarmsignaal', 'Aantal keer zichtbaar', 'Percentage (%)']
-    result_df["Percentage (%)"] = result_df["Percentage (%)"].round(2)
+    result_df.columns = ['Alarmsignaal', 'Aantal keer zichtbaar', 'Percentage gekozen keren (%)']
+    result_df["Percentage gekozen keren (%)"] = result_df["Percentage gekozen keren (%)"].round(2)
+    result_df = result_df.sort_values(by='Percentage gekozen keren (%)', ascending=False)
     return result_df
 
 def analyze_freq_domein(data: pd.DataFrame, specific_question, signal_df: pd.DataFrame) -> pd.DataFrame:
@@ -95,23 +140,98 @@ def analyze_freq_domein(data: pd.DataFrame, specific_question, signal_df: pd.Dat
     return result_df
 
 def analyze_freq_leeftijd(data: pd.DataFrame, specific_question, signal_df: pd.DataFrame) -> pd.DataFrame:
+    age_intervals = {
+        1: "0-6 maanden",
+        2: "6-12 maanden",
+        3: "12-18 maanden",
+        4: "18-24 maanden",
+        5: "24-30 maanden",
+        6: "30-36 maanden",
+        7: "36-42 maanden",
+        8: "42-48 maanden",
+        9: "48-54 maanden",
+        10: "54-60 maanden",
+        11: "60-66 maanden",
+        12: "66-72 maanden"}
     age_types = data['age_range'].value_counts()
     total_entries = len(data)
     result_df = pd.DataFrame({
         'Leeftijdscategorie': age_types.index,
+        'Maand-interval': [age_intervals.get(age, "Onbekend") for age in age_types.index],
         'Aantal keer gekozen': age_types.values,
-        'Percentage (%)': (age_types.values / total_entries) * 100
-    })
-    result_df["Percentage (%)"] = result_df["Percentage (%)"].round(2)
+        'Percentage gekozen keren (%)': (age_types.values / total_entries) * 100})
+    result_df["Percentage gekozen keren (%)"] = result_df["Percentage gekozen keren (%)"].round(2)
     return result_df
 
 def analyze_freq_stoornis(data: pd.DataFrame, specific_question, signal_df: pd.DataFrame) -> pd.DataFrame:
     disorder_counts = {
-        "Language impairment": sum('language disorder' in row['positive'] for _, row in data.iterrows()),
-        "Motoric impairment": sum('motoric disorder' in row['positive'] for _, row in data.iterrows()),
-        "Autism": sum('autism' in row['positive'] for _, row in data.iterrows())}
-    result_df = pd.DataFrame(disorder_counts.items(), columns=['Impairment', 'Aantal keer als positief aangeduid'])
+        "Taalontwikkelingsstoornis": sum('language disorder' in row['positive'] for _, row in data.iterrows()),
+        "Motorische ontwikkelingsstoornis": sum('motoric disorder' in row['positive'] for _, row in data.iterrows()),
+        "Autisme": sum('autism' in row['positive'] for _, row in data.iterrows())}
+    result_df = pd.DataFrame(disorder_counts.items(), columns=['Ontwikkelingsprobleem', 'Aantal keer als positief aangeduid'])
     return result_df
+
+def analyze_stoornis_specific(data: pd.DataFrame, specific_question, signal_df: pd.DataFrame) ->str:
+    stoornis = extract_stoornis_in_question(specific_question)
+    value_counts_1 = 0
+    value_counts_2 = 0
+    value_counts_3 = 0
+    for _, row in data.iterrows():  
+        if 'language disorder' in row['positive']:
+            value_counts_1 += 1
+        if 'motoric disorder' in row['positive']:
+            value_counts_2 += 1
+        if 'autism' in row['positive']:
+            value_counts_3 += 1
+    values = [value_counts_1, value_counts_2, value_counts_3]
+    if stoornis == 'language disorder':
+        stoornis_value = value_counts_1
+    if stoornis == 'motoric disorder':
+        stoornis_value = value_counts_2
+    if stoornis == 'autism':
+        stoornis_value = value_counts_3
+    analysis_result = ""
+    analysis_result += f"Kinderen met dit ontwikkelingsprobleem scoorden {stoornis_value} keer boven de cut-off.\n"
+    return analysis_result
+
+def analyze_relatie_specific(data: pd.DataFrame, specific_question, signal_df: pd.DataFrame) ->str:
+    relatie = extract_relatie_in_question(specific_question)
+    relation_types = data['relation'].value_counts()
+    total_entries = len(data)
+    result_df = pd.DataFrame({
+        "Relatie": relation_types.index,
+        "Aantal keer gekozen": relation_types.values,
+        "Percentage gekozen keren (%)": (relation_types.values / total_entries) * 100})
+    filtered_row = result_df[result_df['Relatie'].str.contains('relatie', case=False)]
+    aantal_keer = filtered_row['Aantal keer gekozen'].values[0]
+    percentage = filtered_row['Percentage gekozen keren (%)'].values[0]
+    analysis_result = ""
+    analysis_result += f"De relatie {relatie} werd {aantal_keer} keer gekozen. Dit is een percentage van {percentage}.\n"
+    return analysis_result
+
+def analyze_domein_specific(data: pd.DataFrame, specific_question, signal_df: pd.DataFrame) ->str:
+    domein = extract_domein_in_question(specific_question)
+    domain_counts = {
+        "Taal en/of communicatie": sum('taal en/of communicatie' in i for i in data['domains']),
+        "Motoriek": sum('motoriek' in i for i in data['domains']),
+        "Sociale vaardigheden": sum('sociale vaardigheden' in i for i in data['domains']),
+        "Gedrag en spel": sum('gedrag en spel' in i for i in data['domains'])}
+    result_df = pd.DataFrame(domain_counts.items(), columns=['Domein', 'Aantal keer gekozen'])
+    filtered_row = result_df[result_df['Domein'].str.contains('domein', case=False)]
+    aantal_keer = filtered_row['Aantal keer gekozen'].values[0]
+    analysis_result = ""
+    analysis_result += f"Het domein {domein} werd {aantal_keer} keer gekozen.\n"
+    return analysis_result
+
+def analyze_leeftijd_specific(data: pd.DataFrame, specific_question, signal_df: pd.DataFrame) ->str:
+    age_1, age_2 = extract_months_from_question(specific_question)
+    mask = (data['age_months'] >= age_1) & (data['age_months'] <= age_2)
+    aantal_keer = mask.sum()  
+    totaal = len(data)  
+    percentage = (aantal_keer / totaal) * 100 
+    analysis_result = ""
+    analysis_result = f"De data bevat {aantal_keer} kinderen tussen de {age_1} en {age_2} maanden. Dit is een percentage van {percentage:.2f}%.\n"
+    return analysis_result
 
 def most_relatie(data: pd.DataFrame, specific_question, signal_df: pd.DataFrame) ->str:
     relation_types = data['relation'].value_counts()
@@ -185,11 +305,17 @@ def most_stoornis(data: pd.DataFrame, specific_question, signal_df: pd.DataFrame
             value_counts_3 += 1
     values = [value_counts_1, value_counts_2, value_counts_3]
     max_stoornis = max(values)
-    max_index = values.index(max_stoornis)
-    stoornissen = ['Language disorder', 'Motoric disorder', 'Autism']
-    stoornis = stoornissen[max_index]
+    if max_stoornis == value_counts_1:
+        stoornis_value = value_counts_1
+        stoornis = 'Taalontwikkelingsprobleem'
+    if max_stoornis == value_counts_2:
+        stoornis_value = value_counts_2
+        stoornis = 'Motorisch ontwikkelingsprobleem'
+    if max_stoornis == value_counts_3:
+        stoornis_value = value_counts_3
+        stoornis = 'Autisme'
     analysis_result = ""
-    analysis_result += f"Het ontwikkelingsprobleem die het meest werd aangegeven als positief is '{stoornis}'. Deze werd {max_stoornis} keer gekozen.\n"
+    analysis_result += f"Het ontwikkelingsprobleem die het meest werd aangegeven als positief is '{stoornis}'. Deze werd {stoornis_value} keer gekozen.\n"
     return analysis_result
 
 def least_relatie(data: pd.DataFrame, specific_question, signal_df: pd.DataFrame) -> str:
@@ -263,23 +389,33 @@ def least_stoornis(data: pd.DataFrame, specific_question, signal_df: pd.DataFram
         if 'autism' in row['positive']:
             value_counts_3 += 1
     values = [value_counts_1, value_counts_2, value_counts_3]
-    min_stoornis = min(values)
-    min_index = values.index(min_stoornis)
-    stoornissen = ['language disorder', 'motoric disorder', 'autism']
-    stoornis = stoornissen[min_index]
+    max_stoornis = min(values)
+    if max_stoornis == value_counts_1:
+        stoornis_value = value_counts_1
+        stoornis = 'Taalontwikkelingsprobleem'
+    if max_stoornis == value_counts_2:
+        stoornis_value = value_counts_2
+        stoornis = 'Motorisch ontwikkelingsprobleem'
+    if max_stoornis == value_counts_3:
+        stoornis_value = value_counts_3
+        stoornis = 'Autisme'
     analysis_result = ""
-    analysis_result += f"Het ontwikkelingsprobleem die het minst aangegeven werd als positief is '{stoornis}'. Deze werd {min_stoornis} keer gekozen.\n"
+    analysis_result += f"Het ontwikkelingsprobleem die het minst werd aangegeven als positief is '{stoornis}'. Deze werd {stoornis_value} keer gekozen.\n"
     return analysis_result
 
 def top_most_signals(data: pd.DataFrame, specific_question, signal_df: pd.DataFrame) -> pd.DataFrame:
     number = extract_number_from_question(specific_question)
+    if number is None:
+        number = extract_number_from_signal_question(specific_question)
     top_signals_df = signal_df.sort_values(by='Percentage gekozen keren', ascending=False).head(number)
-    return top_signals_df[['Vraag', 'Percentage gekozen keren', 'Aantal keer zichtbaar']]
+    return top_signals_df.rename(columns={'Vraag': 'Signaal'})[['Alarmsignaal', 'Percentage gekozen keren', 'Aantal keer zichtbaar']]
 
 def top_least_signals(data: pd.DataFrame, specific_question, signal_df: pd.DataFrame) -> pd.DataFrame:
     number = extract_number_from_question(specific_question)
+    if number is None:
+        number = extract_number_from_signal_question(specific_question)
     top_signals_df = signal_df.sort_values(by='Percentage gekozen keren', ascending=True).head(number)
-    return top_signals_df[['Vraag', 'Percentage gekozen keren', 'Aantal keer zichtbaar']]
+    return top_signals_df.rename(columns={'Vraag': 'Signaal'})[['Alarmsignaal', 'Percentage gekozen keren', 'Aantal keer zichtbaar']]
 
 def signals_below_percentage(data: pd.DataFrame, specific_question, signal_df: pd.DataFrame) -> pd.DataFrame:
     number = extract_percentage_from_question(specific_question)
@@ -288,11 +424,43 @@ def signals_below_percentage(data: pd.DataFrame, specific_question, signal_df: p
         return f"Geen signalen komen voor in minder dan {number}% van de gevallen."
     return filtered_signals[['Vraag', 'Percentage gekozen keren', 'Aantal keer zichtbaar']]
 
-def signals_below_percentage(data: pd.DataFrame, specific_question, signal_df: pd.DataFrame) -> pd.DataFrame:
+def signals_above_percentage(data: pd.DataFrame, specific_question, signal_df: pd.DataFrame) -> pd.DataFrame:
     number = extract_percentage_from_question(specific_question)
     filtered_signals = signal_df[signal_df['Percentage gekozen keren'] > number]
     if filtered_signals.empty:
         return f"Geen signalen komen voor in meer dan {number}% van de gevallen."
+    return filtered_signals[['Vraag', 'Percentage gekozen keren', 'Aantal keer zichtbaar']]
+
+def top_most_alarmsignals(data: pd.DataFrame, specific_question, signal_df: pd.DataFrame) -> pd.DataFrame:
+    number = extract_number_from_question(specific_question)
+    if number is None:
+        number = extract_number_from_alarm_question(specific_question) 
+    alarm_signals = signal_df[signal_df['Is een alarmsignaal'] == True]
+    top_signals_df = alarm_signals.sort_values(by='Percentage gekozen keren', ascending=False).head(number)
+    return top_signals_df.rename(columns={'Vraag': 'Alarmsignaal'})[['Alarmsignaal', 'Percentage gekozen keren', 'Aantal keer zichtbaar']]
+
+def top_least_alarmsignals(data: pd.DataFrame, specific_question, signal_df: pd.DataFrame) -> pd.DataFrame:
+    number = extract_number_from_question(specific_question)
+    if number is None:
+        number = extract_number_from_alarm_question(specific_question) 
+    alarm_signals = signal_df[signal_df['Is een alarmsignaal'] == True]
+    top_signals_df = alarm_signals.sort_values(by='Percentage gekozen keren', ascending=True).head(number)
+    return top_signals_df.rename(columns={'Vraag': 'Alarmsignaal'})[['Alarmsignaal', 'Percentage gekozen keren', 'Aantal keer zichtbaar']]
+
+def signals_alarm_below_percentage(data: pd.DataFrame, specific_question, signal_df: pd.DataFrame) -> pd.DataFrame:
+    number = extract_percentage_from_question(specific_question)
+    alarm_signals = signal_df[signal_df['Is een alarmsignaal'] == True]
+    filtered_signals = alarm_signals[signal_df['Percentage gekozen keren'] < number]
+    if filtered_signals.empty:
+        return f"Geen alarmsignalen komen voor in minder dan {number}% van de gevallen."
+    return filtered_signals[['Vraag', 'Percentage gekozen keren', 'Aantal keer zichtbaar']]
+
+def signals_alarm_above_percentage(data: pd.DataFrame, specific_question, signal_df: pd.DataFrame) -> pd.DataFrame:
+    number = extract_percentage_from_question(specific_question)
+    alarm_signals = signal_df[signal_df['Is een alarmsignaal'] == True]
+    filtered_signals = alarm_signals[signal_df['Percentage gekozen keren'] > number]
+    if filtered_signals.empty:
+        return f"Geen alarmsignalen komen voor in minder dan {number}% van de gevallen."
     return filtered_signals[['Vraag', 'Percentage gekozen keren', 'Aantal keer zichtbaar']]
 
 def how_many_alarm(data: pd.DataFrame, specific_question: str, signal_df: pd.DataFrame) -> pd.DataFrame:
@@ -309,11 +477,74 @@ def how_many_alarm(data: pd.DataFrame, specific_question: str, signal_df: pd.Dat
                     'Index': index,
                     'Aantal alarmsignalen': alarm_count})
     result_df = pd.DataFrame(datapoints_with_alarm)
+    total_children = len(data)
+    children_with_alarm = len(result_df)
     if not result_df.empty:
-        print(f"Het aantal kinderen met tenminste {threshold} alarmsignalen/alarmsignaal is:")
-        print(f"{len(data)}")
-    return result_df
+        percentage = (children_with_alarm / total_children) * 100
+        analysis_results = ""
+        analysis_results += f"Het aantal kinderen met tenminste {threshold} alarmsignalen/alarmsignaal is:"
+        analysis_results += f"{len(data)}"
+        analysis_results += f"Dit bedraagt een percentage van {percentage:.2f}% van de kinderen."
+    return analysis_results
 
+def how_many_signal(data: pd.DataFrame, specific_question: str, signal_df: pd.DataFrame) -> pd.DataFrame:
+    analysis_results = ""
+    domein = extract_domein_in_question(specific_question)
+    if domein is None:
+        stoornis = extract_stoornis_in_question(specific_question)
+    if domein is None and stoornis is None:
+        analysis_results += f"Er werd geen ontwikkelingsprobleem of domein herkend in de vraag. Is alles juist geschreven?"
+        return analysis_results
+    number = extract_number_from_signal_question(specific_question)
+    if number is None:
+        number = extract_number_from_signal_question(specific_question)
+    if number is None:
+        analysis_results += f"Er werd geen hoeveelheid aan signalen herkend in deze vraag."
+        return analysis_results
+    datapoints_with_count = []
+    for index, row in data.iterrows():
+        count = 0
+        if domein is not None:
+            if isinstance(row.get("domains"), list) and domein in row["domains"]:
+                if isinstance(row.get("signals"), list):
+                    count = sum(1 for signal in row["signals"]
+                        if signal in signal_df["Vraag"].values and 
+                        signal_df.loc[signal_df["Vraag"] == signal, "Domein"].values[0] == domein)
+        elif stoornis is not None:
+            if isinstance(row.get("positive"), list) and stoornis in row["positive"]:
+                if isinstance(row.get("signals"), list):
+                    count = sum(1 for signal in row["signals"]
+                        if signal in signal_df["Vraag"].values and 
+                        signal_df.loc[signal_df["Vraag"] == signal, "Disorder"].values[0] == stoornis)
+        if count > 0:
+            datapoints_with_count.append({"Index": index, "Aantal signalen": count})
+    result_df = pd.DataFrame(datapoints_with_count)
+    total_children = len(data)
+    if result_df.empty and domein is not None:
+        analysis_results += f"Er zijn geen kinderen gevonden met tenminste {number} signalen in het domein {domein}."
+        return analysis_results
+    if result_df.empty and stoornis is not None:
+        analysis_results += f"Er zijn geen kinderen gevonden met tenminste {number} signalen voor het ontwikkelingsprobleem {stoornis}."
+        return analysis_results
+    if not result_df.empty:
+        children_with_threshold = len(result_df[result_df["Aantal signalen"] > number])
+        percentage = (children_with_threshold / total_children) * 100
+        if stoornis is not None:
+            total_children_with_stoornis = len(data[data["positive"].apply(lambda x: isinstance(x, list) and stoornis in x)])
+            if total_children_with_stoornis > 0:
+                percentage_2 = (children_with_threshold / total_children_with_stoornis) * 100
+        if domein is not None:
+            total_children_with_domein = len(data[data["domains"].apply(lambda x: isinstance(x, list) and domein in x)])
+            if total_children_with_domein > 0:
+                percentage_2 = (children_with_threshold / total_children_with_domein) * 100
+        analysis_results += f"Het aantal kinderen met meer dan {number} signalen is: {children_with_threshold}.\n"
+        analysis_results += f"Dit bedraagt een percentage van {percentage:.2f}% van het totaal aantal kinderen." 
+        if stoornis is not None:
+            analysis_results += f"Dit bedraagt een percentage van {percentage_2:.2f}% van het totaal aantal kinderen die boven de cut-off scoorden voor {stoornis}."
+        if domein is not None:
+            analysis_results += f"Dit bedraagt een percentage van {percentage_2:.2f}% van het totaal aantal kinderen die waarvoor het domein {domein} gekozen werd."
+    return analysis_results
+    
 #verbanden questions
 def combo_most_relatie_domein(data: pd.DataFrame, specific_question, signal_df: pd.DataFrame) -> pd.DataFrame:
     domeinen = ['taal en/of communicatie', 'motoriek', 'sociale vaardigheden', 'gedrag en spel']
@@ -321,9 +552,11 @@ def combo_most_relatie_domein(data: pd.DataFrame, specific_question, signal_df: 
                 'psycholoog, orthopedagoog, logopedist, kinesitherapeut, ergotherapeut, thuisbegeleider',
                 'huisarts', 'familie', 'zorgcoördinator of zorgleerkracht', 'ander', 'andere arts', 
                 'kind&gezin', 'andere functie op school', 'pediater']
-    number = extract_number_from_question(specific_question)
+    number = extract_number_from_signal_question(specific_question)
     if number is None:
-        number = 5
+        number = extract_number_from_question(specific_question)
+        if number is None:
+            number = 5
     domein = next((dom for dom in domeinen if dom in specific_question), None)
     relatie = next((rel for rel in relaties if rel in specific_question), None)
     if domein is None or relatie is None:
@@ -359,9 +592,11 @@ def combo_least_relatie_domein(data: pd.DataFrame, specific_question, signal_df:
                 'psycholoog, orthopedagoog, logopedist, kinesitherapeut, ergotherapeut, thuisbegeleider',
                 'huisarts', 'familie', 'zorgcoördinator of zorgleerkracht', 'ander', 'andere arts', 
                 'kind&gezin', 'andere functie op school', 'pediater']
-    number = extract_number_from_question(specific_question)
+    number = extract_number_from_signal_question(specific_question)
     if number is None:
-        number = 5
+        number = extract_number_from_question(specific_question)
+        if number is None:
+            number = 5
     domein = next((dom for dom in domeinen if dom in specific_question), None)
     relatie = next((rel for rel in relaties if rel in specific_question), None)
     if domein is None or relatie is None:
@@ -393,12 +628,13 @@ def combo_least_relatie_domein(data: pd.DataFrame, specific_question, signal_df:
 
 def combo_most_domein_stoornis(data: pd.DataFrame, specific_question, signal_df: pd.DataFrame) -> pd.DataFrame:
     domeinen = ['taal en/of communicatie', 'motoriek', 'sociale vaardigheden', 'gedrag en spel']
-    stoornissen = ['language disorder', 'motoric disorder', 'autism' ]
-    number = extract_number_from_question(specific_question)
+    stoornis = extract_stoornis_in_question(specific_question)
+    number = extract_number_from_signal_question(specific_question)
     if number is None:
-        number = 5
+        number = extract_number_from_question(specific_question)
+        if number is None:
+            number = 5
     domein = next((dom for dom in domeinen if dom in specific_question), None)
-    stoornis = next((stoor for stoor in stoornissen if stoor in specific_question), None)
     if not domein or not stoornis:
         return f"\nEr werd geen domein of ontwikkelingsprobleem herkent in de vraag."
     filtered_data = data[(data['domains'].apply(lambda x: domein in x)) & (data['positive'].apply(lambda x: stoornis in x))]
@@ -425,12 +661,13 @@ def combo_most_domein_stoornis(data: pd.DataFrame, specific_question, signal_df:
     
 def combo_least_domein_stoornis(data: pd.DataFrame, specific_question, signal_df: pd.DataFrame)-> pd.DataFrame:
     domeinen = ['taal en/of communicatie', 'motoriek', 'sociale vaardigheden', 'gedrag en spel']
-    stoornissen = ['language disorder', 'motoric disorder', 'autism' ]
-    number = extract_number_from_question(specific_question)
+    stoornis = extract_stoornis_in_question(specific_question)
+    number = extract_number_from_signal_question(specific_question)
     if number is None:
-        number = 5
+        number = extract_number_from_question(specific_question)
+        if number is None:
+            number = 5
     domein = next((dom for dom in domeinen if dom in specific_question), None)
-    stoornis = next((stoor for stoor in stoornissen if stoor in specific_question), None)
     if not domein or not stoornis:
         return f"\nEr werd geen domein of ontwikkelingsprobleem herkent in de vraag."
     filtered_data = data[(data['domains'].apply(lambda x: domein in x)) & (data['positive'].apply(lambda x: stoornis in x))]
@@ -458,9 +695,11 @@ def combo_least_domein_stoornis(data: pd.DataFrame, specific_question, signal_df
 def combo_most_domain_age(data: pd.DataFrame, specific_question, signal_df: pd.DataFrame) -> pd.DataFrame:
     domeinen = ['taal en/of communicatie', 'motoriek', 'sociale vaardigheden', 'gedrag en spel']
     age_1, age_2 = extract_months_from_question(specific_question)
-    number = extract_number_from_question(specific_question)
+    number = extract_number_from_signal_question(specific_question)
     if number is None:
-        number = 5
+        number = extract_number_from_question(specific_question)
+        if number is None:
+            number = 5
     for dom in domeinen:
         if dom in specific_question:
             domein = dom
@@ -496,9 +735,11 @@ def combo_most_domain_age(data: pd.DataFrame, specific_question, signal_df: pd.D
 def combo_least_domain_age(data: pd.DataFrame, specific_question, signal_df: pd.DataFrame) -> pd.DataFrame:
     domeinen = ['taal en/of communicatie', 'motoriek', 'sociale vaardigheden', 'gedrag en spel']
     age_1, age_2 = extract_months_from_question(specific_question)
-    number = extract_number_from_question(specific_question)
+    number = extract_number_from_signal_question(specific_question)
     if number is None:
-        number = 5
+        number = extract_number_from_question(specific_question)
+        if number is None:
+            number = 5
     for dom in domeinen:
         if dom in specific_question:
             domein = dom
@@ -537,9 +778,11 @@ def combo_most_relatie_age(data: pd.DataFrame, specific_question, signal_df: pd.
                 'huisarts', 'familie', 'zorgcoördinator of zorgleerkracht', 'ander', 'andere arts', 
                 'kind&gezin', 'andere functie op school', 'pediater']
     age_1, age_2 = extract_months_from_question(specific_question)
-    number = extract_number_from_question(specific_question)
+    number = extract_number_from_signal_question(specific_question)
     if number is None:
-        number = 5
+        number = extract_number_from_question(specific_question)
+        if number is None:
+            number = 5
     for rel in relaties:
         if rel in specific_question:
             relatie = rel
@@ -577,9 +820,11 @@ def combo_least_relatie_age(data: pd.DataFrame, specific_question, signal_df: pd
                 'huisarts', 'familie', 'zorgcoördinator of zorgleerkracht', 'ander', 'andere arts', 
                 'kind&gezin', 'andere functie op school', 'pediater']
     age_1, age_2 = extract_months_from_question(specific_question)
-    number = extract_number_from_question(specific_question)
+    number = extract_number_from_signal_question(specific_question)
     if number is None:
-        number = 5
+        number = extract_number_from_question(specific_question)
+        if number is None:
+            number = 5
     for rel in relaties:
         if rel in specific_question:
             relatie = rel
@@ -618,9 +863,11 @@ def combo_most_domain_age_relatie(data: pd.DataFrame, specific_question, signal_
                 'psycholoog, orthopedagoog, logopedist, kinesitherapeut, ergotherapeut, thuisbegeleider',
                 'huisarts', 'familie', 'zorgcoördinator of zorgleerkracht', 'ander', 'andere arts', 
                 'kind&gezin', 'andere functie op school', 'pediater']
-    number = extract_number_from_question(specific_question)
+    number = extract_number_from_signal_question(specific_question)
     if number is None:
-        number = 5
+        number = extract_number_from_question(specific_question)
+        if number is None:
+            number = 5
     for rel in relaties:
         if rel in specific_question:
             relatie = rel
@@ -672,9 +919,11 @@ def combo_least_domain_age_relatie(data: pd.DataFrame, specific_question, signal
                 'psycholoog, orthopedagoog, logopedist, kinesitherapeut, ergotherapeut, thuisbegeleider',
                 'huisarts', 'familie', 'zorgcoördinator of zorgleerkracht', 'ander', 'andere arts', 
                 'kind&gezin', 'andere functie op school', 'pediater']
-    number = extract_number_from_question(specific_question)
+    number = extract_number_from_signal_question(specific_question)
     if number is None:
-        number = 5
+        number = extract_number_from_question(specific_question)
+        if number is None:
+            number = 5
     for rel in relaties:
         if rel in specific_question:
             relatie = rel
@@ -781,143 +1030,158 @@ def combo_least_signal(data: pd.DataFrame, specific_question, signal_df: pd.Data
     result_df = pd.DataFrame(sorted_pairs, columns=["Signaal 1", "Signaal 2", "Aantal keer samen gekozen", "Aantal keer samen zichtbaar", "Percentage"])
     return result_df
 
+def combo_most_stoornis(data: pd.DataFrame, specific_question, signal_df: pd.DataFrame) -> str:
+    stoornis = extract_stoornis_in_question(specific_question)
+    filtered_data = data[(data['positive'].apply(lambda x: stoornis in x if isinstance(x, list) else False))]
+    number = extract_number_from_signal_question(specific_question)
+    if number is None:
+        number = extract_number_from_question(specific_question)
+        if number is None:
+            number = 5
+    gevonden_signalen = []
+    for index, row in filtered_data.iterrows():
+        signals = row['signals']
+        if isinstance(signals, list):
+            for signal in signals:
+                signal_row = signal_df[signal_df['Vraag'] == signal]
+                if not signal_row.empty:
+                    percentage = signal_row['Percentage gekozen keren'].values[0]
+                    gevonden_signalen.append({'Signal': signal, 'Percentage gekozen keren': percentage})
+    signal_df_sorted = pd.DataFrame(gevonden_signalen)
+    signal_df_sorted = signal_df_sorted.drop_duplicates(subset='Signal')
+    signal_df_sorted = signal_df_sorted.sort_values(by='Percentage gekozen keren', ascending=False)
+    return signal_df_sorted.head(number)
+
 def combo_most_age(data: pd.DataFrame, specific_question, signal_df: pd.DataFrame) -> pd.DataFrame:
-    results = []
-    for age_range in sorted(data['age_range'].unique()):
-        age_data = data[data['age_range'] == age_range]
-        valid_signals = []
-        for signals_list in age_data['signals']:
-            for signal in signals_list:
-                valid_signals.append(signal)
-        signal_percentages = []
-        for signal in set(valid_signals):
-            signal_info = signal_df[signal_df['Vraag'] == signal]
-            if not signal_info.empty:
-                percentage = signal_info['Percentage gekozen keren'].values[0]
-                signal_percentages.append((signal, percentage))
-        if signal_percentages:
-            top_signal = max(signal_percentages, key=lambda x: x[1])
-            top_signal_name = top_signal[0]
-            top_signal_percentage = top_signal[1]
-            results.append((age_range, top_signal_name, top_signal_percentage))
-            result_df = pd.DataFrame(results, columns=["Leeftijdscategorie", "Meest Gekozen Signaal", "Percentage"])
-    return result_df
+    age_1, age_2 = extract_months_from_question(specific_question)
+    if number is None:
+        number = extract_number_from_question(specific_question)
+        if number is None:
+            number = 5
+    if age_1 is None or age_2 is None:
+        age_1, age_2 = extract_month_from_question(specific_question), 0
+    filtered_data = data[(data['age_months'].between(age_1, age_2))]
+    gevonden_signalen = []
+    for index, row in filtered_data.iterrows():
+        signals = row['signals']
+        if isinstance(signals, list):
+            for signal in signals:
+                signal_row = signal_df[signal_df['Vraag'] == signal]
+                if not signal_row.empty:
+                    percentage = signal_row['Percentage gekozen keren'].values[0]
+                    gevonden_signalen.append({'Signal': signal, 'Percentage gekozen keren': percentage})
+    signal_df_sorted = pd.DataFrame(gevonden_signalen)
+    signal_df_sorted = signal_df_sorted.drop_duplicates(subset='Signal')
+    signal_df_sorted = signal_df_sorted.sort_values(by='Percentage gekozen keren', ascending=False)
+    return signal_df_sorted.head(number)
 
 def combo_least_age(data: pd.DataFrame, specific_question, signal_df: pd.DataFrame) -> pd.DataFrame:
-    results = []
-    for age_range in sorted(data['age_range'].unique()):
-        age_data = data[data['age_range'] == age_range]
-        valid_signals = []
-        for signals_list in age_data['signals']:
-            for signal in signals_list:
-                valid_signals.append(signal)
-        signal_percentages = []
-        for signal in set(valid_signals):
-            signal_info = signal_df[signal_df['Vraag'] == signal]
-            if not signal_info.empty:
-                percentage = signal_info['Percentage gekozen keren'].values[0]
-                signal_percentages.append((signal, percentage))
-        if signal_percentages:
-            top_signal = min(signal_percentages, key=lambda x: x[1])
-            top_signal_name = top_signal[0]
-            top_signal_percentage = top_signal[1]
-            results.append((age_range, top_signal_name, top_signal_percentage))
-            result_df = pd.DataFrame(results, columns=["Leeftijdscategorie", "Minst Gekozen Signaal", "Percentage"])
-    return result_df       
+    age_1, age_2 = extract_months_from_question(specific_question)
+    if number is None:
+        number = extract_number_from_question(specific_question)
+        if number is None:
+            number = 5
+    if age_1 is None or age_2 is None:
+        age_1, age_2 = extract_month_from_question(specific_question), 0
+    filtered_data = data[(data['age_months'].between(age_1, age_2))]
+    gevonden_signalen = []
+    for index, row in filtered_data.iterrows():
+        signals = row['signals']
+        if isinstance(signals, list):
+            for signal in signals:
+                signal_row = signal_df[signal_df['Vraag'] == signal]
+                if not signal_row.empty:
+                    percentage = signal_row['Percentage gekozen keren'].values[0]
+                    gevonden_signalen.append({'Signal': signal, 'Percentage gekozen keren': percentage})
+    signal_df_sorted = pd.DataFrame(gevonden_signalen)
+    signal_df_sorted = signal_df_sorted.drop_duplicates(subset='Signal')
+    signal_df_sorted = signal_df_sorted.sort_values(by='Percentage gekozen keren', ascending=True)
+    return signal_df_sorted.head(number)      
 
 def combo_most_domein(data: pd.DataFrame, specific_question, signal_df: pd.DataFrame) -> pd.DataFrame:
-    results = []
-    for domein in signal_df['Domein'].unique():
-        domain_signals = signal_df[signal_df['Domein'] == domein]
-        sorted_signals = domain_signals.sort_values(by='Percentage gekozen keren', ascending=False)
-        top_signal = sorted_signals.iloc[0]
-        results.append((domein, top_signal['Vraag'], top_signal['Percentage gekozen keren']))
-        result_df = pd.DataFrame(results, columns=["Domein", "Meest Gekozen Signaal", "Percentage"])
-    return result_df
+    domein = extract_domein_in_question(specific_question)
+    filtered_data = data[(data['domains'].apply(lambda x: domein in x))]
+    gevonden_signalen = []
+    if number is None:
+        number = extract_number_from_question(specific_question)
+        if number is None:
+            number = 5
+    for index, row in filtered_data.iterrows():
+        signals = row['signals']
+        if isinstance(signals, list):
+            for signal in signals:
+                signal_row = signal_df[signal_df['Vraag'] == signal]
+                if not signal_row.empty:
+                    percentage = signal_row['Percentage gekozen keren'].values[0]
+                    gevonden_signalen.append({'Signal': signal, 'Percentage gekozen keren': percentage})
+    signal_df_sorted = pd.DataFrame(gevonden_signalen)
+    signal_df_sorted = signal_df_sorted.drop_duplicates(subset='Signal')
+    signal_df_sorted = signal_df_sorted.sort_values(by='Percentage gekozen keren', ascending=False)
+    return signal_df_sorted.head(number) 
 
 def combo_least_domein(data: pd.DataFrame, specific_question, signal_df: pd.DataFrame) -> pd.DataFrame:
-    results = []
-    for domein in signal_df['Domein'].unique():
-        domain_signals = signal_df[signal_df['Domein'] == domein]
-        sorted_signals = domain_signals.sort_values(by='Percentage gekozen keren', ascending=True)
-        top_signal = sorted_signals.iloc[0]
-        results.append((domein, top_signal['Vraag'], top_signal['Percentage gekozen keren']))
-        result_df = pd.DataFrame(results, columns=["Domein", "Minst Gekozen Signaal", "Percentage"])
-    return result_df
+    domein = extract_domein_in_question(specific_question)
+    filtered_data = data[(data['domains'].apply(lambda x: domein in x))]
+    gevonden_signalen = []
+    if number is None:
+        number = extract_number_from_question(specific_question)
+        if number is None:
+            number = 5
+    for index, row in filtered_data.iterrows():
+        signals = row['signals']
+        if isinstance(signals, list):
+            for signal in signals:
+                signal_row = signal_df[signal_df['Vraag'] == signal]
+                if not signal_row.empty:
+                    percentage = signal_row['Percentage gekozen keren'].values[0]
+                    gevonden_signalen.append({'Signal': signal, 'Percentage gekozen keren': percentage})
+    signal_df_sorted = pd.DataFrame(gevonden_signalen)
+    signal_df_sorted = signal_df_sorted.drop_duplicates(subset='Signal')
+    signal_df_sorted = signal_df_sorted.sort_values(by='Percentage gekozen keren', ascending=False)
+    return signal_df_sorted.head(number) 
 
 def combo_most_relatie(data: pd.DataFrame, specific_question, signal_df: pd.DataFrame) -> pd.DataFrame:
-    results = []
-    for relation in sorted(data['relation'].unique()):
-        relation_data = data[data['relation'] == relation]
-        valid_signals = []
-        for signals_list in relation_data['signals']:
-            for signal in signals_list:
-                valid_signals.append(signal)
-        signal_percentages = []
-        for signal in valid_signals:
-            signal_info = signal_df[signal_df['Vraag'] == signal]
-            if not signal_info.empty:
-                percentage = signal_info['Percentage gekozen keren'].values[0]
-                signal_percentages.append((signal, percentage))
-        if signal_percentages:
-            top_signal = max(signal_percentages, key=lambda x: x[1])
-            results.append((relation, top_signal[0], top_signal[1]))
-            result_df = pd.DataFrame(results, columns=["Relatie", "Meest Gekozen Signaal", "Percentage"])
-    return result_df 
+    relatie = extract_relatie_in_question(specific_question)
+    if number is None:
+        number = extract_number_from_question(specific_question)
+        if number is None:
+            number = 5
+    filtered_data = data[(data['relation'] == relatie)]
+    gevonden_signalen = []
+    for index, row in filtered_data.iterrows():
+        signals = row['signals']
+        if isinstance(signals, list):
+            for signal in signals:
+                signal_row = signal_df[signal_df['Vraag'] == signal]
+                if not signal_row.empty:
+                    percentage = signal_row['Percentage gekozen keren'].values[0]
+                    gevonden_signalen.append({'Signal': signal, 'Percentage gekozen keren': percentage})
+    signal_df_sorted = pd.DataFrame(gevonden_signalen)
+    signal_df_sorted = signal_df_sorted.drop_duplicates(subset='Signal')
+    signal_df_sorted = signal_df_sorted.sort_values(by='Percentage gekozen keren', ascending=False)
+    return signal_df_sorted.head(number) 
 
 def combo_least_relatie(data: pd.DataFrame, specific_question, signal_df: pd.DataFrame) -> pd.DataFrame:
-    results = []
-    for relation in sorted(data['relation'].unique()):
-        relation_data = data[data['relation'] == relation]
-        valid_signals = []
-        for signals_list in relation_data['signals']:
-            for signal in signals_list:
-                valid_signals.append(signal)
-        signal_percentages = []
-        for signal in valid_signals:
-            signal_info = signal_df[signal_df['Vraag'] == signal]
-            if not signal_info.empty:
-                percentage = signal_info['Percentage gekozen keren'].values[0]
-                signal_percentages.append((signal, percentage))
-        if signal_percentages:
-            top_signal = min(signal_percentages, key=lambda x: x[1])
-            results.append((relation, top_signal[0], top_signal[1]))
-            result_df = pd.DataFrame(results, columns=["Relatie", "Minst Gekozen Signaal", "Percentage"])
-    return result_df 
-
-def combo_most_stoornis(data: pd.DataFrame, specific_question, signal_df: pd.DataFrame) -> pd.DataFrame:
-    results = []
-    processed_stoornissen = set()
-    for index, row in data.iterrows():
-        for stoornis in row['positive']:
-            if stoornis in processed_stoornissen:
-                continue  
-            processed_stoornissen.add(stoornis)
-            signals_in_row = row['signals']
-            relevant_signals_df = signal_df[signal_df['Vraag'].isin(signals_in_row)]
-            if not relevant_signals_df.empty:
-                sorted_signals = relevant_signals_df.sort_values(by='Percentage gekozen keren', ascending=False)
-                top_signal = sorted_signals.iloc[0]
-                results.append((stoornis, top_signal['Vraag'], top_signal['Percentage gekozen keren']))
-    result_df = pd.DataFrame(results, columns=["Ontwikkelingsprobleem", "Meest Gekozen Signaal", "Percentage"])
-    return result_df
-
-def combo_least_stoornis(data: pd.DataFrame, specific_question, signal_df: pd.DataFrame) -> pd.DataFrame:
-    results = []
-    processed_stoornissen = set()
-    for index, row in data.iterrows():
-        for stoornis in row['positive']:
-            if stoornis in processed_stoornissen:
-                continue  
-            processed_stoornissen.add(stoornis)
-            signals_in_row = row['signals']
-            relevant_signals_df = signal_df[signal_df['Vraag'].isin(signals_in_row)]
-            if not relevant_signals_df.empty:
-                sorted_signals = relevant_signals_df.sort_values(by='Percentage gekozen keren', ascending=True)
-                top_signal = sorted_signals.iloc[0]
-                results.append((stoornis, top_signal['Vraag'], top_signal['Percentage gekozen keren']))
-    result_df = pd.DataFrame(results, columns=["Ontwikkelingsprobleem", "Minst Gekozen Signaal", "Percentage"])
-    return result_df
+    relatie = extract_relatie_in_question(specific_question)
+    number = extract_number_from_signal_question
+    if number is None:
+        number = extract_number_from_question(specific_question)
+        if number is None:
+            number = 5
+    filtered_data = data[(data['relation'] == relatie)]
+    gevonden_signalen = []
+    for index, row in filtered_data.iterrows():
+        signals = row['signals']
+        if isinstance(signals, list):
+            for signal in signals:
+                signal_row = signal_df[signal_df['Vraag'] == signal]
+                if not signal_row.empty:
+                    percentage = signal_row['Percentage gekozen keren'].values[0]
+                    gevonden_signalen.append({'Signal': signal, 'Percentage gekozen keren': percentage})
+    signal_df_sorted = pd.DataFrame(gevonden_signalen)
+    signal_df_sorted = signal_df_sorted.drop_duplicates(subset='Signal')
+    signal_df_sorted = signal_df_sorted.sort_values(by='Percentage gekozen keren', ascending=True)
+    return signal_df_sorted.head(number)  
 
 def zelden_voorkomen(data: pd.DataFrame, specific_question, signal_df: pd.DataFrame) -> pd.DataFrame:
     threshold = 5
@@ -952,12 +1216,13 @@ def combo_most_relatie_stoornis(data: pd.DataFrame, specific_question, signal_df
                 'psycholoog, orthopedagoog, logopedist, kinesitherapeut, ergotherapeut, thuisbegeleider',
                 'huisarts', 'familie', 'zorgcoördinator of zorgleerkracht', 'ander', 'andere arts', 
                 'kind&gezin', 'andere functie op school', 'pediater']
-    stoornissen = ['language disorder', 'motoric disorder', 'autism' ]
-    number = extract_number_from_question(specific_question)
+    number = extract_number_from_signal_question(specific_question)
     if number is None:
-        number = 5
+        number = extract_number_from_question(specific_question)
+        if number is None:
+            number = 5
     relatie = next((rel for rel in relaties if rel in specific_question), None)
-    stoornis = next((stoor for stoor in stoornissen if stoor in specific_question), None)
+    stoornis = extract_stoornis_in_question(specific_question)
     if not relatie or not stoornis:
         return f"\nEr werd geen relatie of ontwikkelingsprobleem herkent in de vraag."
     filtered_data = data[(data['relation'] == relatie) & (data['positive'].apply(lambda x: stoornis in x))]
@@ -984,12 +1249,13 @@ def combo_least_relatie_stoornis(data: pd.DataFrame, specific_question, signal_d
                 'psycholoog, orthopedagoog, logopedist, kinesitherapeut, ergotherapeut, thuisbegeleider',
                 'huisarts', 'familie', 'zorgcoördinator of zorgleerkracht', 'ander', 'andere arts', 
                 'kind&gezin', 'andere functie op school', 'pediater']
-    stoornissen = ['language disorder', 'motoric disorder', 'autism' ]
-    number = extract_number_from_question(specific_question)
+    number = extract_number_from_signal_question(specific_question)
     if number is None:
-        number = 5
+        number = extract_number_from_question(specific_question)
+        if number is None:
+            number = 5
     relatie = next((rel for rel in relaties if rel in specific_question), None)
-    stoornis = next((stoor for stoor in stoornissen if stoor in specific_question), None)
+    stoornis = extract_stoornis_in_question(specific_question)
     if not relatie or not stoornis:
         return f"\nEr werd geen relatie of ontwikkelingsprobleem herkent in de vraag."
     filtered_data = data[(data['relation'] == relatie) & (data['positive'].apply(lambda x: stoornis in x))]
@@ -1012,15 +1278,14 @@ def combo_least_relatie_stoornis(data: pd.DataFrame, specific_question, signal_d
     return signal_df_sorted.head(number)
 
 def combo_most_stoornis_age_domain(data: pd.DataFrame, specific_question, signal_df: pd.DataFrame) -> str:
-    stoornissen = ['language disorder', 'motoric disorder', 'autism']
     domeinen = ['taal en/of communicatie', 'motoriek', 'sociale vaardigheden', 'gedrag en spel']
     age_1, age_2 = extract_months_from_question(specific_question)
-    number = extract_number_from_question(specific_question)
+    number = extract_number_from_signal_question(specific_question)
     if number is None:
-        number = 5
-    for stoor in stoornissen:
-        if stoor in specific_question:
-            stoornis = stoor
+        number = extract_number_from_question(specific_question)
+        if number is None:
+            number = 5
+    stoornis = extract_stoornis_in_question(specific_question)
     for dom in domeinen:
         if dom in specific_question:
             domein = dom
@@ -1028,7 +1293,7 @@ def combo_most_stoornis_age_domain(data: pd.DataFrame, specific_question, signal
         return f"Er is geen ontwikkelingsprobleem of domein gevonden in de vraag."
     filtered_data = data[
         (data['positive'].apply(lambda x: stoornis in x)) & 
-        (data['domain'] == domein) & 
+        (data['domains'].apply(lambda x: dom in x)) & 
         (data['age_months'] >= age_1) & 
         (data['age_months'] <= age_2)]
     if filtered_data.empty:
@@ -1050,15 +1315,14 @@ def combo_most_stoornis_age_domain(data: pd.DataFrame, specific_question, signal
     return signal_df_sorted.head(number)
 
 def combo_least_stoornis_age_domain(data: pd.DataFrame, specific_question, signal_df: pd.DataFrame) -> str:
-    stoornissen = ['language disorder', 'motoric disorder', 'autism']
     domeinen = ['taal en/of communicatie', 'motoriek', 'sociale vaardigheden', 'gedrag en spel']
     age_1, age_2 = extract_months_from_question(specific_question)
-    number = extract_number_from_question(specific_question)
+    stoornis = extract_stoornis_in_question(specific_question)
+    number = extract_number_from_signal_question(specific_question)
     if number is None:
-        number = 5
-    for stoor in stoornissen:
-        if stoor in specific_question:
-            stoornis = stoor
+        number = extract_number_from_question(specific_question)
+        if number is None:
+            number = 5
     for dom in domeinen:
         if dom in specific_question:
             domein = dom
@@ -1066,7 +1330,7 @@ def combo_least_stoornis_age_domain(data: pd.DataFrame, specific_question, signa
         return f"Er is geen ontwikkelingsprobleem of domein gevonden in de vraag."
     filtered_data = data[
         (data['positive'].apply(lambda x: stoornis in x)) & 
-        (data['domain'] == domein) & 
+        (data['domains'].apply(lambda x: dom in x)) & 
         (data['age_months'] >= age_1) & 
         (data['age_months'] <= age_2)]
     if filtered_data.empty:
@@ -1088,14 +1352,13 @@ def combo_least_stoornis_age_domain(data: pd.DataFrame, specific_question, signa
     return signal_df_sorted.head(number)
 
 def combo_most_stoornis_age(data: pd.DataFrame, specific_question, signal_df: pd.DataFrame) -> str:
-    stoornissen = ['language disorder', 'motoric disorder', 'autism' ]
+    stoornis = extract_stoornis_in_question(specific_question)
     age_1, age_2 = extract_months_from_question(specific_question)
-    number = extract_number_from_question(specific_question)
+    number = extract_number_from_signal_question(specific_question)
     if number is None:
-        number = 5
-    for stoor in stoornissen:
-        if stoor in specific_question:
-            stoornis = stoor
+        number = extract_number_from_question(specific_question)
+        if number is None:
+            number = 5
     filtered_data = data[(data['positive'].apply(lambda x: stoornis in x)) & (data['age_months'].between(age_1, age_2))]
     if filtered_data.empty:
         return f"Er zijn geen signalen gevonden voor een positieve stoornis '{stoornis}' voor een leeftijd tussen '{age_1}' en '{age_2}' maanden. Tip: Check of alles juist geschreven is."
@@ -1116,14 +1379,13 @@ def combo_most_stoornis_age(data: pd.DataFrame, specific_question, signal_df: pd
     return signal_df_sorted.head(number)
 
 def combo_least_stoornis_age(data: pd.DataFrame, specific_question, signal_df: pd.DataFrame) -> str:
-    stoornissen = ['language disorder', 'motoric disorder', 'autism' ]
+    stoornis = extract_stoornis_in_question(specific_question)
     age_1, age_2 = extract_months_from_question(specific_question)
-    number = extract_number_from_question(specific_question)
+    number = extract_number_from_signal_question(specific_question)
     if number is None:
-        number = 5
-    for stoor in stoornissen:
-        if stoor in specific_question:
-            stoornis = stoor
+        number = extract_number_from_question(specific_question)
+        if number is None:
+            number = 5
     filtered_data = data[(data['positive'].apply(lambda x: stoornis in x)) & (data['age_months'].between(age_1, age_2))]
     if filtered_data.empty:
         return f"Er zijn geen signalen gevonden voor een positieve stoornis '{stoornis}' voor een leeftijd tussen '{age_1}' en '{age_2}' maanden. Tip: Check of alles juist geschreven is."
@@ -1144,18 +1406,17 @@ def combo_least_stoornis_age(data: pd.DataFrame, specific_question, signal_df: p
     return signal_df_sorted.head(number)
 
 def combo_most_age_relatie_stoornis(data: pd.DataFrame, specific_question, signal_df: pd.DataFrame) -> str:
-    stoornissen = ['language disorder', 'motoric disorder', 'autism']
+    stoornis = extract_stoornis_in_question(specific_question)
     relaties = ['ouder', 'kinderbegeleider of verantwoordelijke kinderopvang', 'clb', 'leerkracht', 
                 'psycholoog, orthopedagoog, logopedist, kinesitherapeut, ergotherapeut, thuisbegeleider',
                 'huisarts', 'familie', 'zorgcoördinator of zorgleerkracht', 'ander', 'andere arts', 
                 'kind&gezin', 'andere functie op school', 'pediater']
     age_1, age_2 = extract_months_from_question(specific_question)
-    number = extract_number_from_question(specific_question)
+    number = extract_number_from_signal_question(specific_question)
     if number is None:
-        number = 5
-    for stoor in stoornissen:
-        if stoor in specific_question:
-            stoornis = stoor
+        number = extract_number_from_question(specific_question)
+        if number is None:
+            number = 5
     for rel in relaties:
         if rel in specific_question:
             relatie = rel
@@ -1171,14 +1432,13 @@ def combo_most_age_relatie_stoornis(data: pd.DataFrame, specific_question, signa
     gevonden_signalen = []
 
 def combo_most_stoornis_age(data: pd.DataFrame, specific_question, signal_df: pd.DataFrame) -> str:
-    stoornissen = ['language disorder', 'motoric disorder', 'autism' ]
+    stoornis = extract_stoornis_in_question(specific_question)
     age_1, age_2 = extract_months_from_question(specific_question)
-    number = extract_number_from_question(specific_question)
+    number = extract_number_from_signal_question(specific_question)
     if number is None:
-        number = 5
-    for stoor in stoornissen:
-        if stoor in specific_question:
-            stoornis = stoor
+        number = extract_number_from_question(specific_question)
+        if number is None:
+            number = 5
     filtered_data = data[(data['positive'].apply(lambda x: stoornis in x)) & (data['age_months'].between(age_1, age_2))]
     if filtered_data.empty:
         return f"Er zijn geen signalen gevonden voor een positieve stoornis '{stoornis}' voor een leeftijd tussen '{age_1}' en '{age_2}' maanden."
@@ -1199,18 +1459,17 @@ def combo_most_stoornis_age(data: pd.DataFrame, specific_question, signal_df: pd
     return signal_df_sorted.head(number)
 
 def combo_least_age_relatie_stoornis(data: pd.DataFrame, specific_question, signal_df: pd.DataFrame) -> str:
-    stoornissen = ['language disorder', 'motoric disorder', 'autism']
+    stoornis = extract_stoornis_in_question(specific_question)
     relaties = ['ouder', 'kinderbegeleider of verantwoordelijke kinderopvang', 'clb', 'leerkracht', 
                 'psycholoog, orthopedagoog, logopedist, kinesitherapeut, ergotherapeut, thuisbegeleider',
                 'huisarts', 'familie', 'zorgcoördinator of zorgleerkracht', 'ander', 'andere arts', 
                 'kind&gezin', 'andere functie op school', 'pediater']
     age_1, age_2 = extract_months_from_question(specific_question)
-    number = extract_number_from_question(specific_question)
+    number = extract_number_from_signal_question(specific_question)
     if number is None:
-        number = 5
-    for stoor in stoornissen:
-        if stoor in specific_question:
-            stoornis = stoor
+        number = extract_number_from_question(specific_question)
+        if number is None:
+            number = 5
     for rel in relaties:
         if rel in specific_question:
             relatie = rel
@@ -1226,14 +1485,13 @@ def combo_least_age_relatie_stoornis(data: pd.DataFrame, specific_question, sign
     gevonden_signalen = []
 
 def combo_most_stoornis_age(data: pd.DataFrame, specific_question, signal_df: pd.DataFrame) -> str:
-    stoornissen = ['language disorder', 'motoric disorder', 'autism' ]
+    stoornis = extract_stoornis_in_question(specific_question)
     age_1, age_2 = extract_months_from_question(specific_question)
-    number = extract_number_from_question(specific_question)
+    number = extract_number_from_signal_question(specific_question)
     if number is None:
-        number = 5
-    for stoor in stoornissen:
-        if stoor in specific_question:
-            stoornis = stoor
+        number = extract_number_from_question(specific_question)
+        if number is None:
+            number = 5
     filtered_data = data[(data['positive'].apply(lambda x: stoornis in x)) & (data['age_months'].between(age_1, age_2))]
     if filtered_data.empty:
         return f"Er zijn geen signalen gevonden voor een positieve stoornis '{stoornis}' voor een leeftijd tussen '{age_1}' en '{age_2}' maanden."
@@ -1255,20 +1513,19 @@ def combo_most_stoornis_age(data: pd.DataFrame, specific_question, signal_df: pd
 
 def combo_most_domain_stoornis_relatie(data: pd.DataFrame, specific_question, signal_df: pd.DataFrame) -> str:
     domeinen = ['taal en/of communicatie', 'motoriek', 'sociale vaardigheden', 'gedrag en spel']
-    stoornissen = ['language disorder', 'motoric disorder', 'autism']
+    stoornis = extract_stoornis_in_question(specific_question)
     relaties = ['ouder', 'kinderbegeleider of verantwoordelijke kinderopvang', 'clb', 'leerkracht', 
                 'psycholoog, orthopedagoog, logopedist, kinesitherapeut, ergotherapeut, thuisbegeleider',
                 'huisarts', 'familie', 'zorgcoördinator of zorgleerkracht', 'ander', 'andere arts', 
                 'kind&gezin', 'andere functie op school', 'pediater']
-    number = extract_number_from_question(specific_question)
+    number = extract_number_from_signal_question(specific_question)
     if number is None:
-        number = 5
+        number = extract_number_from_question(specific_question)
+        if number is None:
+            number = 5
     for dom in domeinen:
         if dom in specific_question:
             domein = dom
-    for stoor in stoornissen:
-        if stoor in specific_question:
-            stoornis = stoor
     for rel in relaties:
         if rel in specific_question:
             relatie = rel        
@@ -1300,20 +1557,19 @@ def combo_most_domain_stoornis_relatie(data: pd.DataFrame, specific_question, si
 
 def combo_least_domain_stoornis_relatie(data: pd.DataFrame, specific_question, signal_df: pd.DataFrame) -> str:
     domeinen = ['taal en/of communicatie', 'motoriek', 'sociale vaardigheden', 'gedrag en spel']
-    stoornissen = ['language disorder', 'motoric disorder', 'autism']
+    stoornis = extract_stoornis_in_question(specific_question)
     relaties = ['ouder', 'kinderbegeleider of verantwoordelijke kinderopvang', 'clb', 'leerkracht', 
                 'psycholoog, orthopedagoog, logopedist, kinesitherapeut, ergotherapeut, thuisbegeleider',
                 'huisarts', 'familie', 'zorgcoördinator of zorgleerkracht', 'ander', 'andere arts', 
                 'kind&gezin', 'andere functie op school', 'pediater']
-    number = extract_number_from_question(specific_question)
+    number = extract_number_from_signal_question(specific_question)
     if number is None:
-        number = 5
+        number = extract_number_from_question(specific_question)
+        if number is None:
+            number = 5
     for dom in domeinen:
         if dom in specific_question:
             domein = dom
-    for stoor in stoornissen:
-        if stoor in specific_question:
-            stoornis = stoor
     for rel in relaties:
         if rel in specific_question:
             relatie = rel        
@@ -1346,16 +1602,17 @@ def combo_least_domain_stoornis_relatie(data: pd.DataFrame, specific_question, s
 def combo_most_all(data: pd.DataFrame, specific_question, signal_df: pd.DataFrame) -> str:
     analysis_results = ''
     domeinen = ['taal en/of communicatie', 'motoriek', 'sociale vaardigheden', 'gedrag en spel']
-    stoornissen = ['language disorder', 'motoric disorder', 'autism']
+    stoornis = extract_stoornis_in_question(specific_question)
     relaties = ['ouder', 'kinderbegeleider of verantwoordelijke kinderopvang', 'clb', 'leerkracht', 
                 'psycholoog, orthopedagoog, logopedist, kinesitherapeut, ergotherapeut, thuisbegeleider',
                 'huisarts', 'familie', 'zorgcoördinator of zorgleerkracht', 'ander', 'andere arts', 
                 'kind&gezin', 'andere functie op school', 'pediater']
     age_1, age_2 = extract_months_from_question(specific_question)
-    number = extract_number_from_question(specific_question)
-    for stoor in stoornissen:
-        if stoor in specific_question:
-            stoornis = stoor
+    number = extract_number_from_signal_question(specific_question)
+    if number is None:
+        number = extract_number_from_question(specific_question)
+        if number is None:
+            number = 5
     for dom in domeinen:
         if dom in specific_question:
             domein = dom
@@ -1387,16 +1644,17 @@ def combo_most_all(data: pd.DataFrame, specific_question, signal_df: pd.DataFram
 def combo_least_all(data: pd.DataFrame, specific_question, signal_df: pd.DataFrame) -> str:
     analysis_results = ''
     domeinen = ['taal en/of communicatie', 'motoriek', 'sociale vaardigheden', 'gedrag en spel']
-    stoornissen = ['language disorder', 'motoric disorder', 'autism']
+    stoornis = extract_stoornis_in_question(specific_question)
     relaties = ['ouder', 'kinderbegeleider of verantwoordelijke kinderopvang', 'clb', 'leerkracht', 
                 'psycholoog, orthopedagoog, logopedist, kinesitherapeut, ergotherapeut, thuisbegeleider',
                 'huisarts', 'familie', 'zorgcoördinator of zorgleerkracht', 'ander', 'andere arts', 
                 'kind&gezin', 'andere functie op school', 'pediater']
     age_1, age_2 = extract_months_from_question(specific_question)
-    number = extract_number_from_question(specific_question)
-    for stoor in stoornissen:
-        if stoor in specific_question:
-            stoornis = stoor
+    number = extract_number_from_signal_question(specific_question)
+    if number is None:
+        number = extract_number_from_question(specific_question)
+        if number is None:
+            number = 5
     for dom in domeinen:
         if dom in specific_question:
             domein = dom
@@ -1425,6 +1683,28 @@ def combo_least_all(data: pd.DataFrame, specific_question, signal_df: pd.DataFra
     signal_df_sorted = signal_df_sorted.sort_values(by='Percentage gekozen keren', ascending=True)
     return signal_df_sorted.head(number)
 
+def combo_least_stoornis(data: pd.DataFrame, specific_question, signal_df: pd.DataFrame) -> str:
+    stoornis = extract_stoornis_in_question(specific_question)
+    filtered_data = data[(data['positive'].apply(lambda x: stoornis in x if isinstance(x, list) else False))]
+    number = extract_number_from_signal_question(specific_question)
+    if number is None:
+        number = extract_number_from_question(specific_question)
+        if number is None:
+            number = 5
+    gevonden_signalen = []
+    for index, row in filtered_data.iterrows():
+        signals = row['signals']
+        if isinstance(signals, list):
+            for signal in signals:
+                signal_row = signal_df[signal_df['Vraag'] == signal]
+                if not signal_row.empty:
+                    percentage = signal_row['Percentage gekozen keren'].values[0]
+                    gevonden_signalen.append({'Signal': signal, 'Percentage gekozen keren': percentage})
+    signal_df_sorted = pd.DataFrame(gevonden_signalen)
+    signal_df_sorted = signal_df_sorted.drop_duplicates(subset='Signal')
+    signal_df_sorted = signal_df_sorted.sort_values(by='Percentage gekozen keren', ascending=True)
+    return signal_df_sorted.head(number)
+    
 #trends questions
 
 def time_more(data: pd.DataFrame, specific_question, signal_df: pd.DataFrame) -> str:

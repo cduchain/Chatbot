@@ -1,0 +1,540 @@
+2025-02-19 14:54:16,136 - WARNING - Some parameters are on the meta device because they were offloaded to the cpu and disk.
+2025-02-19 14:55:22,733 - WARNING - Some parameters are on the meta device because they were offloaded to the cpu and disk.
+2025-02-19 15:02:41,926 - WARNING - Some parameters are on the meta device because they were offloaded to the cpu and disk.
+2025-02-19 15:02:43,297 - INFO - Vraag: welke relatie komt het meest voor?
+2025-02-19 15:02:43,297 - INFO - Gekozen analyse functie: most_relatie
+2025-02-19 15:02:43,297 - INFO - Antwoord: De meest gekozen relatie is 'ouder' die 117 keer werd gekozen.
+
+2025-02-19 15:02:43,298 - INFO - Verwerkingstijd: 0.01 seconden
+2025-02-19 15:03:06,068 - INFO - Vraag: welk domein komt het meest voor?
+2025-02-19 15:03:06,069 - INFO - Gekozen analyse functie: most_domein
+2025-02-19 15:03:06,069 - INFO - Antwoord: Het meest gekozen domein is 'Taal en/of communicatie' dat 284 keer werd gekozen.
+
+2025-02-19 15:03:06,069 - INFO - Verwerkingstijd: 0.00 seconden
+2025-02-19 15:03:13,967 - INFO - Vraag: welk domein komt het meest voor?
+2025-02-19 15:03:13,967 - INFO - Gekozen analyse functie: most_domein
+2025-02-19 15:03:13,968 - INFO - Antwoord: Het meest gekozen domein is 'Taal en/of communicatie' dat 284 keer werd gekozen.
+
+2025-02-19 15:03:13,968 - INFO - Verwerkingstijd: 0.00 seconden
+2025-02-19 15:16:03,412 - INFO - Vraag: welk domein komt het meest voor?
+2025-02-19 15:16:03,412 - INFO - Gekozen analyse functie: most_domein
+2025-02-19 15:16:03,412 - INFO - Antwoord: Het meest gekozen domein is 'Taal en/of communicatie' dat 284 keer werd gekozen.
+
+2025-02-19 15:16:03,412 - INFO - Verwerkingstijd: 0.00 seconden
+2025-02-19 15:16:21,513 - INFO - Vraag: welk domein komt het meest voorn
+2025-02-19 15:16:21,514 - INFO - Gekozen analyse functie: most_domein
+2025-02-19 15:16:21,514 - INFO - Antwoord: Het meest gekozen domein is 'Taal en/of communicatie' dat 284 keer werd gekozen.
+
+2025-02-19 15:16:21,514 - INFO - Verwerkingstijd: 0.00 seconden
+2025-02-19 15:17:46,421 - WARNING - Some parameters are on the meta device because they were offloaded to the cpu and disk.
+2025-02-19 15:17:47,863 - INFO - Vraag: welk domein komt het meest voorn
+2025-02-19 15:17:47,863 - INFO - Gekozen analyse functie: most_domein
+2025-02-19 15:17:47,863 - INFO - Antwoord: Het meest gekozen domein is 'Taal en/of communicatie' dat 284 keer werd gekozen.
+
+2025-02-19 15:17:47,863 - INFO - Verwerkingstijd: 0.00 seconden
+2025-02-19 15:17:57,362 - INFO - Vraag: welk domein komt het meest voor?
+2025-02-19 15:17:57,363 - INFO - Gekozen analyse functie: most_domein
+2025-02-19 15:17:57,363 - INFO - Antwoord: Het meest gekozen domein is 'Taal en/of communicatie' dat 284 keer werd gekozen.
+
+2025-02-19 15:17:57,363 - INFO - Verwerkingstijd: 0.00 seconden
+2025-02-19 15:21:14,877 - INFO - Vraag: welk domein komt het meest voor?
+2025-02-19 15:21:14,878 - INFO - Gekozen analyse functie: most_domein
+2025-02-19 15:21:14,878 - INFO - Antwoord: Het meest gekozen domein is 'Taal en/of communicatie' dat 284 keer werd gekozen.
+
+2025-02-19 15:21:14,878 - INFO - Verwerkingstijd: 4.01 seconden
+2025-02-19 16:05:43,556 - WARNING - Some parameters are on the meta device because they were offloaded to the cpu and disk.
+2025-02-19 16:05:45,131 - INFO - Vraag: welk domein komt het meest voor?
+2025-02-19 16:05:45,131 - INFO - Gekozen analyse functie: most_domein
+2025-02-19 16:05:45,131 - INFO - Antwoord: Het meest gekozen domein is 'Taal en/of communicatie' dat 284 keer werd gekozen.
+
+2025-02-19 16:05:45,131 - INFO - Verwerkingstijd: 0.00 seconden
+2025-02-19 16:15:20,761 - INFO - Vraag: welk domein komt het meest voor?
+2025-02-19 16:15:20,761 - INFO - Gekozen analyse functie: most_domein
+2025-02-19 16:15:20,761 - INFO - Antwoord: Het meest gekozen domein is 'Taal en/of communicatie' dat 284 keer werd gekozen.
+
+2025-02-19 16:15:20,761 - INFO - Verwerkingstijd: 0.01 seconden
+2025-02-19 16:16:55,383 - WARNING - Some parameters are on the meta device because they were offloaded to the cpu and disk.
+2025-02-19 16:16:56,623 - INFO - Vraag: welk domein komt het meest voor?
+2025-02-19 16:16:56,623 - INFO - Gekozen analyse functie: most_domein
+2025-02-19 16:16:56,623 - INFO - Antwoord: Het meest gekozen domein is 'Taal en/of communicatie' dat 284 keer werd gekozen.
+
+2025-02-19 16:16:56,623 - INFO - Verwerkingstijd: 0.00 seconden
+2025-02-19 16:20:13,528 - INFO - Vraag: welk domein komt het meest voor?
+2025-02-19 16:20:13,528 - INFO - Gekozen analyse functie: most_domein
+2025-02-19 16:20:13,528 - INFO - Antwoord: Het meest gekozen domein is 'Taal en/of communicatie' dat 284 keer werd gekozen.
+
+2025-02-19 16:20:13,528 - INFO - Verwerkingstijd: 0.00 seconden
+2025-02-21 13:46:47,031 - WARNING - Some parameters are on the meta device because they were offloaded to the disk and cpu.
+2025-02-21 13:47:18,090 - WARNING - Some parameters are on the meta device because they were offloaded to the disk and cpu.
+2025-02-21 13:47:20,735 - INFO - Vraag: hoeveel werd er voor elke relatie gekozen?
+2025-02-21 13:47:20,735 - INFO - Gekozen analyse functie: analyze_freq_relatie
+2025-02-21 13:47:20,735 - INFO - Antwoord:                                               Relatie  Aantal keer gekozen  Percentage (%)
+0                                               ouder                  117           30.55
+1   kinderbegeleider of verantwoordelijke kinderop...                   65           16.97
+2                                                 clb                   64           16.71
+3                                          leerkracht                   39           10.18
+4   psycholoog, orthopedagoog, logopedist, kinesit...                   37            9.66
+5                                            huisarts                   19            4.96
+6                                             familie                   15            3.92
+7                  zorgcoo\u0308rdinator of zorgleerkracht                   10            2.61
+8                                               ander                    5            1.31
+9                                         andere arts                    4            1.04
+10                                         kind&gezin                    3            0.78
+11                           andere functie op school                    3            0.78
+12                                           pediater                    2            0.52
+2025-02-21 13:47:20,757 - INFO - Verwerkingstijd: 0.10 seconden
+2025-02-21 13:48:00,371 - WARNING - Some parameters are on the meta device because they were offloaded to the disk and cpu.
+2025-02-21 13:48:04,197 - INFO - Vraag: hoeveel werd er voor elk signaal gekozen?
+2025-02-21 13:48:04,197 - INFO - Gekozen analyse functie: analyze_freq_signaal
+2025-02-21 13:48:04,197 - INFO - Antwoord:                                                Signaal  Aantal keer zichtbaar  Percentage (%)
+1    kan niet op de armpjes steunen om zijn/haar ho...                      3           66.67
+108              gebruikt geen zinnetjes van 2 woorden                     39           61.54
+221  minder dan 50% van de spraakuitingen zijn duid...                     63           42.86
+63           kan niet op een dikke rechte lijn knippen                     62           41.94
+12   kan niet zijwaarts stappen waarbij hij/zij zic...                     12           41.67
+..                                                 ...                    ...             ...
+81   ging/gaat achteruit in zijn/haar motorische on...                    328            2.13
+155            reageert niet op zichzelf in de spiegel                     73            1.37
+227  zet consistent meer gewicht op één helft van h...                    318            1.26
+225                     gebruikt één lichaamsdeel niet                    381            0.52
+213  kan hoofd niet stabiel houden, wanneer iemand ...                      4            0.00
+
+[229 rows x 3 columns]
+2025-02-21 13:48:04,213 - INFO - Verwerkingstijd: 0.10 seconden
+2025-02-21 13:48:40,775 - WARNING - Some parameters are on the meta device because they were offloaded to the disk and cpu.
+2025-02-21 13:49:19,200 - INFO - Vraag: hoeveel werd er voor elk domein gekozen?
+2025-02-21 13:49:19,200 - INFO - Gekozen analyse functie: analyze_freq_domein
+2025-02-21 13:49:19,200 - INFO - Antwoord:                     Domein  Aantal keer gekozen
+0  Taal en/of communicatie                  284
+1                 Motoriek                  240
+2     Sociale vaardigheden                  277
+3           Gedrag en spel                  274
+2025-02-21 13:49:19,209 - INFO - Verwerkingstijd: 0.12 seconden
+2025-02-21 13:49:53,844 - WARNING - Some parameters are on the meta device because they were offloaded to the disk and cpu.
+2025-02-21 13:49:56,929 - INFO - Vraag: hoeveel werd er voor elke leeftijdsgroep gekozen?
+2025-02-21 13:49:56,929 - INFO - Gekozen analyse functie: analyze_freq_leeftijd
+2025-02-21 13:49:56,929 - INFO - Antwoord:    Leeftijdscategorie  Aantal keer gekozen  Percentage (%)
+0                   7                   51           13.32
+1                   4                   42           10.97
+2                   6                   36            9.40
+3                   9                   36            9.40
+4                   5                   32            8.36
+5                   2                   28            7.31
+6                   8                   27            7.05
+7                  10                   26            6.79
+8                   1                   26            6.79
+9                   3                   23            6.01
+10                 11                   23            6.01
+11                 12                   19            4.96
+12                  0                    7            1.83
+13                 13                    7            1.83
+2025-02-21 13:49:56,937 - INFO - Verwerkingstijd: 0.06 seconden
+2025-02-21 13:52:30,670 - INFO - Vraag: hoeveel werd er voor elke leeftijdsgroep gekozen?
+2025-02-21 13:52:30,670 - INFO - Gekozen analyse functie: analyze_freq_leeftijd
+2025-02-21 13:52:30,670 - INFO - Antwoord:    Leeftijdscategorie Maand-interval  Aantal keer gekozen  Percentage (%)
+0                   7  36-42 maanden                   51           13.32
+1                   4  18-24 maanden                   42           10.97
+2                   6  30-36 maanden                   36            9.40
+3                   9  48-54 maanden                   36            9.40
+4                   5  24-30 maanden                   32            8.36
+5                   2   6-12 maanden                   28            7.31
+6                   8  42-48 maanden                   27            7.05
+7                  10  54-60 maanden                   26            6.79
+8                   1    0-6 maanden                   26            6.79
+9                   3  12-18 maanden                   23            6.01
+10                 11  60-66 maanden                   23            6.01
+11                 12  66-72 maanden                   19            4.96
+12                  0       Onbekend                    7            1.83
+13                 13       Onbekend                    7            1.83
+2025-02-21 13:52:30,678 - INFO - Verwerkingstijd: 0.03 seconden
+2025-02-21 13:56:59,965 - INFO - Vraag: hoeveel werd er voor elk ontwikkelingsprobleem gekozen?
+2025-02-21 13:56:59,965 - INFO - Gekozen analyse functie: analyze_freq_stoornis
+2025-02-21 13:56:59,965 - INFO - Antwoord:               Ontwikkelingsprobleem  Aantal keer als positief aangeduid
+0         Taalontwikkelingsstoornis                                 125
+1  Motorische ontwikkelingsstoornis                                 133
+2                           Autisme                                 211
+2025-02-21 13:56:59,970 - INFO - Verwerkingstijd: 0.05 seconden
+2025-02-21 13:57:27,040 - INFO - Vraag: hoeveel werd er voor elk ontwikkelingsprobleem positief gescoord?
+2025-02-21 13:57:27,040 - INFO - Gekozen analyse functie: analyze_freq_stoornis
+2025-02-21 13:57:27,040 - INFO - Antwoord:               Ontwikkelingsprobleem  Aantal keer als positief aangeduid
+0         Taalontwikkelingsstoornis                                 125
+1  Motorische ontwikkelingsstoornis                                 133
+2                           Autisme                                 211
+2025-02-21 13:57:27,042 - INFO - Verwerkingstijd: 0.05 seconden
+2025-02-21 13:58:53,569 - INFO - Vraag: hoeveel keer werd er voor elk signaal gekozen?
+2025-02-21 13:58:53,569 - INFO - Gekozen analyse functie: analyze_freq_signaal
+2025-02-21 13:58:53,569 - INFO - Antwoord:                                                Signaal  Aantal keer zichtbaar  Percentage (%)
+1    kan niet op de armpjes steunen om zijn/haar ho...                      3           66.67
+108              gebruikt geen zinnetjes van 2 woorden                     39           61.54
+221  minder dan 50% van de spraakuitingen zijn duid...                     63           42.86
+63           kan niet op een dikke rechte lijn knippen                     62           41.94
+12   kan niet zijwaarts stappen waarbij hij/zij zic...                     12           41.67
+..                                                 ...                    ...             ...
+81   ging/gaat achteruit in zijn/haar motorische on...                    328            2.13
+155            reageert niet op zichzelf in de spiegel                     73            1.37
+227  zet consistent meer gewicht op één helft van h...                    318            1.26
+225                     gebruikt één lichaamsdeel niet                    381            0.52
+213  kan hoofd niet stabiel houden, wanneer iemand ...                      4            0.00
+
+[229 rows x 3 columns]
+2025-02-21 13:58:53,575 - INFO - Verwerkingstijd: 0.01 seconden
+2025-02-21 13:59:49,271 - INFO - Vraag: hoeveel keer werd er voor elk signaal gekozen?
+2025-02-21 13:59:49,271 - INFO - Gekozen analyse functie: analyze_freq_signaal
+2025-02-21 13:59:49,271 - INFO - Antwoord:                                                Signaal  Aantal keer zichtbaar  Percentage (%)
+1    kan niet op de armpjes steunen om zijn/haar ho...                      3           66.67
+108              gebruikt geen zinnetjes van 2 woorden                     39           61.54
+221  minder dan 50% van de spraakuitingen zijn duid...                     63           42.86
+63           kan niet op een dikke rechte lijn knippen                     62           41.94
+12   kan niet zijwaarts stappen waarbij hij/zij zic...                     12           41.67
+..                                                 ...                    ...             ...
+81   ging/gaat achteruit in zijn/haar motorische on...                    328            2.13
+155            reageert niet op zichzelf in de spiegel                     73            1.37
+227  zet consistent meer gewicht op één helft van h...                    318            1.26
+225                     gebruikt één lichaamsdeel niet                    381            0.52
+213  kan hoofd niet stabiel houden, wanneer iemand ...                      4            0.00
+
+[229 rows x 3 columns]
+2025-02-21 13:59:49,286 - INFO - Verwerkingstijd: 0.00 seconden
+2025-02-21 14:01:22,490 - INFO - Vraag: hoeveel keer werd er voor elk alarmsignaal gekozen?
+2025-02-21 14:01:22,491 - INFO - Gekozen analyse functie: analyze_freq_alarmsignaal
+2025-02-21 14:01:22,491 - INFO - Antwoord:                                           Alarmsignaal  Aantal keer zichtbaar  Percentage (%)
+0    kan zijn/haar hoofd in buiklig helemaal niet o...                      3           33.33
+4    kan niet rechtop blijven zitten wanneer iemand...                     11           18.18
+16           kan nog geen 5 stappen zetten zonder hulp                     19           15.79
+19              valt vaak zonder duidelijke aanleiding                    263           16.35
+43   kan op geen enkele manier van houding verander...                     45           15.56
+78   draait zijn/haar hoofd altijd naar dezelfde ka...                      5           20.00
+79   spant zijn/haar spieren te veel op waardoor be...                    377            7.96
+80   gebruikt opvallend vaak één helft van het lich...                    357            3.64
+81   ging/gaat achteruit in zijn/haar motorische on...                    328            2.13
+82        beweegt traag en onzeker, is zeer afwachtend                    263            8.75
+83   blijft opvallend slordig en onhandig bij fijn-...                     78           21.79
+89   brabbelt weinig of niet (enkel van toepassing ...                     39           20.51
+96             gebruikt minder dan 10 woorden spontaan                     77           35.06
+97   ging/gaat achteruit in zijn/haar taalontwikkel...                    302            5.63
+99                 reageert vaak niet op de eigen naam                    374           23.80
+101  kan geen enkelvoudige opdracht uitvoeren (bv.:...                     87           20.69
+107  kan geen dubbele opdracht uitvoeren (bv: “pak ...                    148           22.97
+134  wanneer iemand iets aanwijst ergens anders in ...                    345           19.42
+136  wijst niet (met de wijsvinger) om zijn/haar in...                    200           20.50
+165  ging/gaat achteruit in zijn/haar sociale ontwi...                    328            5.49
+168  deelt zelden of nooit zijn/haar plezier of int...                    328           21.34
+179  probeert activiteiten of spel van ouders/verzo...                    103           26.21
+181  doet het spel van andere kinderen zelden of no...                    231           19.48
+182  zondert zich af van andere kinderen (bv. in de...                    328           24.39
+195  maakt vreemde bewegingen met de vingers voor z...                    328            7.32
+196  kan niet met speelgoed spelen op de manier waa...                    263           10.65
+197  maakt vaak eigenaardige bewegingen zoals schom...                    263           11.03
+198  heeft rituelen (anders dan slaapritueel) die o...                    328           12.80
+210  toont weinig variatie in zijn/haar bewegingspa...                    377           16.71
+211  spant zijn/haar spieren te weinig op waardoor ...                    377           10.61
+212                    beweegt zeer houterig/niet vlot                    328           20.12
+213  kan hoofd niet stabiel houden, wanneer iemand ...                      4            0.00
+222  doet weinig pogingen om zijn/haar plezier of i...                     39           17.95
+224           stapt grote delen van de dag op de tenen                    302            6.29
+225                     gebruikt één lichaamsdeel niet                    381            0.52
+227  zet consistent meer gewicht op één helft van h...                    318            1.26
+2025-02-21 14:01:22,496 - INFO - Verwerkingstijd: 0.01 seconden
+2025-02-21 14:17:56,883 - INFO - Vraag: hoeveel keer werd er voor elk alarmsignaal gekozen?
+2025-02-21 14:17:56,883 - INFO - Gekozen analyse functie: analyze_freq_alarmsignaal
+2025-02-21 14:17:56,883 - INFO - Antwoord:                                           Alarmsignaal  Aantal keer zichtbaar  Percentage gekozen keren (%)
+96             gebruikt minder dan 10 woorden spontaan                     77                         35.06
+0    kan zijn/haar hoofd in buiklig helemaal niet o...                      3                         33.33
+179  probeert activiteiten of spel van ouders/verzo...                    103                         26.21
+182  zondert zich af van andere kinderen (bv. in de...                    328                         24.39
+99                 reageert vaak niet op de eigen naam                    374                         23.80
+107  kan geen dubbele opdracht uitvoeren (bv: “pak ...                    148                         22.97
+83   blijft opvallend slordig en onhandig bij fijn-...                     78                         21.79
+168  deelt zelden of nooit zijn/haar plezier of int...                    328                         21.34
+101  kan geen enkelvoudige opdracht uitvoeren (bv.:...                     87                         20.69
+89   brabbelt weinig of niet (enkel van toepassing ...                     39                         20.51
+136  wijst niet (met de wijsvinger) om zijn/haar in...                    200                         20.50
+212                    beweegt zeer houterig/niet vlot                    328                         20.12
+78   draait zijn/haar hoofd altijd naar dezelfde ka...                      5                         20.00
+181  doet het spel van andere kinderen zelden of no...                    231                         19.48
+134  wanneer iemand iets aanwijst ergens anders in ...                    345                         19.42
+4    kan niet rechtop blijven zitten wanneer iemand...                     11                         18.18
+222  doet weinig pogingen om zijn/haar plezier of i...                     39                         17.95
+210  toont weinig variatie in zijn/haar bewegingspa...                    377                         16.71
+19              valt vaak zonder duidelijke aanleiding                    263                         16.35
+16           kan nog geen 5 stappen zetten zonder hulp                     19                         15.79
+43   kan op geen enkele manier van houding verander...                     45                         15.56
+198  heeft rituelen (anders dan slaapritueel) die o...                    328                         12.80
+197  maakt vaak eigenaardige bewegingen zoals schom...                    263                         11.03
+196  kan niet met speelgoed spelen op de manier waa...                    263                         10.65
+211  spant zijn/haar spieren te weinig op waardoor ...                    377                         10.61
+82        beweegt traag en onzeker, is zeer afwachtend                    263                          8.75
+79   spant zijn/haar spieren te veel op waardoor be...                    377                          7.96
+195  maakt vreemde bewegingen met de vingers voor z...                    328                          7.32
+224           stapt grote delen van de dag op de tenen                    302                          6.29
+97   ging/gaat achteruit in zijn/haar taalontwikkel...                    302                          5.63
+165  ging/gaat achteruit in zijn/haar sociale ontwi...                    328                          5.49
+80   gebruikt opvallend vaak één helft van het lich...                    357                          3.64
+81   ging/gaat achteruit in zijn/haar motorische on...                    328                          2.13
+227  zet consistent meer gewicht op één helft van h...                    318                          1.26
+225                     gebruikt één lichaamsdeel niet                    381                          0.52
+213  kan hoofd niet stabiel houden, wanneer iemand ...                      4                          0.00
+2025-02-21 14:17:56,894 - INFO - Verwerkingstijd: 0.02 seconden
+2025-02-21 14:19:23,413 - INFO - Vraag: hoeveel keer werd er voor elk alarmsignaal gekozen?
+2025-02-21 14:19:23,413 - INFO - Gekozen analyse functie: analyze_freq_alarmsignaal
+2025-02-21 14:19:23,413 - INFO - Antwoord:                                           Alarmsignaal  Aantal keer zichtbaar  Percentage gekozen keren (%)
+96             gebruikt minder dan 10 woorden spontaan                     77                         35.06
+0    kan zijn/haar hoofd in buiklig helemaal niet o...                      3                         33.33
+179  probeert activiteiten of spel van ouders/verzo...                    103                         26.21
+182  zondert zich af van andere kinderen (bv. in de...                    328                         24.39
+99                 reageert vaak niet op de eigen naam                    374                         23.80
+107  kan geen dubbele opdracht uitvoeren (bv: “pak ...                    148                         22.97
+83   blijft opvallend slordig en onhandig bij fijn-...                     78                         21.79
+168  deelt zelden of nooit zijn/haar plezier of int...                    328                         21.34
+101  kan geen enkelvoudige opdracht uitvoeren (bv.:...                     87                         20.69
+89   brabbelt weinig of niet (enkel van toepassing ...                     39                         20.51
+136  wijst niet (met de wijsvinger) om zijn/haar in...                    200                         20.50
+212                    beweegt zeer houterig/niet vlot                    328                         20.12
+78   draait zijn/haar hoofd altijd naar dezelfde ka...                      5                         20.00
+181  doet het spel van andere kinderen zelden of no...                    231                         19.48
+134  wanneer iemand iets aanwijst ergens anders in ...                    345                         19.42
+4    kan niet rechtop blijven zitten wanneer iemand...                     11                         18.18
+222  doet weinig pogingen om zijn/haar plezier of i...                     39                         17.95
+210  toont weinig variatie in zijn/haar bewegingspa...                    377                         16.71
+19              valt vaak zonder duidelijke aanleiding                    263                         16.35
+16           kan nog geen 5 stappen zetten zonder hulp                     19                         15.79
+43   kan op geen enkele manier van houding verander...                     45                         15.56
+198  heeft rituelen (anders dan slaapritueel) die o...                    328                         12.80
+197  maakt vaak eigenaardige bewegingen zoals schom...                    263                         11.03
+196  kan niet met speelgoed spelen op de manier waa...                    263                         10.65
+211  spant zijn/haar spieren te weinig op waardoor ...                    377                         10.61
+82        beweegt traag en onzeker, is zeer afwachtend                    263                          8.75
+79   spant zijn/haar spieren te veel op waardoor be...                    377                          7.96
+195  maakt vreemde bewegingen met de vingers voor z...                    328                          7.32
+224           stapt grote delen van de dag op de tenen                    302                          6.29
+97   ging/gaat achteruit in zijn/haar taalontwikkel...                    302                          5.63
+165  ging/gaat achteruit in zijn/haar sociale ontwi...                    328                          5.49
+80   gebruikt opvallend vaak één helft van het lich...                    357                          3.64
+81   ging/gaat achteruit in zijn/haar motorische on...                    328                          2.13
+227  zet consistent meer gewicht op één helft van h...                    318                          1.26
+225                     gebruikt één lichaamsdeel niet                    381                          0.52
+213  kan hoofd niet stabiel houden, wanneer iemand ...                      4                          0.00
+2025-02-21 14:19:23,423 - INFO - Verwerkingstijd: 0.01 seconden
+2025-02-21 14:26:13,717 - INFO - Vraag: hoeveel keer werd er voor elk alarmsignaal gekozen?
+2025-02-21 14:26:13,721 - INFO - Gekozen analyse functie: analyze_freq_alarmsignaal
+2025-02-21 14:26:13,721 - INFO - Antwoord:                                           Alarmsignaal  Aantal keer zichtbaar  Percentage gekozen keren (%)
+96             gebruikt minder dan 10 woorden spontaan                     77                         35.06
+0    kan zijn/haar hoofd in buiklig helemaal niet o...                      3                         33.33
+179  probeert activiteiten of spel van ouders/verzo...                    103                         26.21
+182  zondert zich af van andere kinderen (bv. in de...                    328                         24.39
+99                 reageert vaak niet op de eigen naam                    374                         23.80
+107  kan geen dubbele opdracht uitvoeren (bv: “pak ...                    148                         22.97
+83   blijft opvallend slordig en onhandig bij fijn-...                     78                         21.79
+168  deelt zelden of nooit zijn/haar plezier of int...                    328                         21.34
+101  kan geen enkelvoudige opdracht uitvoeren (bv.:...                     87                         20.69
+89   brabbelt weinig of niet (enkel van toepassing ...                     39                         20.51
+136  wijst niet (met de wijsvinger) om zijn/haar in...                    200                         20.50
+212                    beweegt zeer houterig/niet vlot                    328                         20.12
+78   draait zijn/haar hoofd altijd naar dezelfde ka...                      5                         20.00
+181  doet het spel van andere kinderen zelden of no...                    231                         19.48
+134  wanneer iemand iets aanwijst ergens anders in ...                    345                         19.42
+4    kan niet rechtop blijven zitten wanneer iemand...                     11                         18.18
+222  doet weinig pogingen om zijn/haar plezier of i...                     39                         17.95
+210  toont weinig variatie in zijn/haar bewegingspa...                    377                         16.71
+19              valt vaak zonder duidelijke aanleiding                    263                         16.35
+16           kan nog geen 5 stappen zetten zonder hulp                     19                         15.79
+43   kan op geen enkele manier van houding verander...                     45                         15.56
+198  heeft rituelen (anders dan slaapritueel) die o...                    328                         12.80
+197  maakt vaak eigenaardige bewegingen zoals schom...                    263                         11.03
+196  kan niet met speelgoed spelen op de manier waa...                    263                         10.65
+211  spant zijn/haar spieren te weinig op waardoor ...                    377                         10.61
+82        beweegt traag en onzeker, is zeer afwachtend                    263                          8.75
+79   spant zijn/haar spieren te veel op waardoor be...                    377                          7.96
+195  maakt vreemde bewegingen met de vingers voor z...                    328                          7.32
+224           stapt grote delen van de dag op de tenen                    302                          6.29
+97   ging/gaat achteruit in zijn/haar taalontwikkel...                    302                          5.63
+165  ging/gaat achteruit in zijn/haar sociale ontwi...                    328                          5.49
+80   gebruikt opvallend vaak één helft van het lich...                    357                          3.64
+81   ging/gaat achteruit in zijn/haar motorische on...                    328                          2.13
+227  zet consistent meer gewicht op één helft van h...                    318                          1.26
+225                     gebruikt één lichaamsdeel niet                    381                          0.52
+213  kan hoofd niet stabiel houden, wanneer iemand ...                      4                          0.00
+2025-02-21 14:26:13,725 - INFO - Verwerkingstijd: 0.01 seconden
+2025-02-21 14:28:37,665 - INFO - Vraag: zijn er signalen die in minder dan 5% van de data gekozen worden?
+2025-02-21 14:28:37,665 - INFO - Gekozen analyse functie: signals_below_percentage
+2025-02-21 14:28:37,665 - INFO - Antwoord:                                                  Vraag  Percentage gekozen keren  Aantal keer zichtbaar
+0    kan zijn/haar hoofd in buiklig helemaal niet o...                     33.33                      3
+1    kan niet op de armpjes steunen om zijn/haar ho...                     66.67                      3
+2    kan bij ondersteund zitten zijn/haar hoofd nie...                     25.00                      4
+3    kan in buiklig zijn/haar hoofd niet 90° oprich...                     14.81                     27
+4    kan niet rechtop blijven zitten wanneer iemand...                     18.18                     11
+..                                                 ...                       ...                    ...
+222  doet weinig pogingen om zijn/haar plezier of i...                     17.95                     39
+223  begrijpt geen eenvoudig verhaaltje over een si...                     36.51                     63
+224           stapt grote delen van de dag op de tenen                      6.29                    302
+226  blijft te veel vanuit de schouder bewegen bij ...                     12.82                     78
+228  kan niet op een loopfiets met 3 of 4 wielen ri...                      9.15                    164
+
+[219 rows x 3 columns]
+2025-02-21 14:28:37,675 - INFO - Verwerkingstijd: 0.01 seconden
+2025-02-21 14:28:59,573 - INFO - Vraag: zijn er signalen die in minder dan 5% van de data gekozen worden?
+2025-02-21 14:28:59,575 - INFO - Gekozen analyse functie: signals_below_percentage
+2025-02-21 14:28:59,575 - INFO - Antwoord:                                                  Vraag  Percentage gekozen keren  Aantal keer zichtbaar
+45   kan wanneer hij op zijn handen en voeten of kn...                      2.94                     34
+80   gebruikt opvallend vaak één helft van het lich...                      3.64                    357
+81   ging/gaat achteruit in zijn/haar motorische on...                      2.13                    328
+85   maakt geen geluidjes wanneer een ouder/verzorg...                      4.35                     23
+88   lijkt niet te luisteren naar eigen klanken, he...                      3.12                     32
+155            reageert niet op zichzelf in de spiegel                      1.37                     73
+213  kan hoofd niet stabiel houden, wanneer iemand ...                      0.00                      4
+225                     gebruikt één lichaamsdeel niet                      0.52                    381
+227  zet consistent meer gewicht op één helft van h...                      1.26                    318
+2025-02-21 14:28:59,576 - INFO - Verwerkingstijd: 0.01 seconden
+2025-02-21 14:31:57,551 - INFO - Vraag: zijn er signalen die in minder dan 5% van de data gekozen worden?
+2025-02-21 14:31:57,551 - INFO - Gekozen analyse functie: signals_below_percentage
+2025-02-21 14:31:57,551 - INFO - Antwoord:                                                  Vraag  Percentage gekozen keren  Aantal keer zichtbaar
+45   kan wanneer hij op zijn handen en voeten of kn...                      2.94                     34
+80   gebruikt opvallend vaak één helft van het lich...                      3.64                    357
+81   ging/gaat achteruit in zijn/haar motorische on...                      2.13                    328
+85   maakt geen geluidjes wanneer een ouder/verzorg...                      4.35                     23
+88   lijkt niet te luisteren naar eigen klanken, he...                      3.12                     32
+155            reageert niet op zichzelf in de spiegel                      1.37                     73
+213  kan hoofd niet stabiel houden, wanneer iemand ...                      0.00                      4
+225                     gebruikt één lichaamsdeel niet                      0.52                    381
+227  zet consistent meer gewicht op één helft van h...                      1.26                    318
+2025-02-21 14:31:57,554 - INFO - Verwerkingstijd: 0.00 seconden
+2025-02-21 14:32:33,110 - INFO - Vraag: zijn er signalen die in minder dan 5% van de data gekozen worden?
+2025-02-21 14:32:33,110 - INFO - Gekozen analyse functie: signals_below_percentage
+2025-02-21 14:32:33,110 - INFO - Antwoord:                                                  Vraag  Percentage gekozen keren  Aantal keer zichtbaar
+45   kan wanneer hij op zijn handen en voeten of kn...                      2.94                     34
+80   gebruikt opvallend vaak één helft van het lich...                      3.64                    357
+81   ging/gaat achteruit in zijn/haar motorische on...                      2.13                    328
+85   maakt geen geluidjes wanneer een ouder/verzorg...                      4.35                     23
+88   lijkt niet te luisteren naar eigen klanken, he...                      3.12                     32
+155            reageert niet op zichzelf in de spiegel                      1.37                     73
+213  kan hoofd niet stabiel houden, wanneer iemand ...                      0.00                      4
+225                     gebruikt één lichaamsdeel niet                      0.52                    381
+227  zet consistent meer gewicht op één helft van h...                      1.26                    318
+2025-02-21 14:32:33,118 - INFO - Verwerkingstijd: 0.00 seconden
+2025-02-21 15:45:37,882 - INFO - Vraag: welke signalen komen het vaakst voor bij kinderen die boven de cut-off scoren voor taalontwikkelingsstoornis?
+2025-02-21 15:45:37,882 - INFO - Gekozen analyse functie: combo_most_signal
+2025-02-21 15:45:37,882 - INFO - Antwoord:                                            Signaal 1  ... Percentage
+0              gebruikt geen zinnetjes van 2 woorden  ...  51.282051
+1              gebruikt geen zinnetjes van 2 woorden  ...  51.282051
+2              gebruikt geen zinnetjes van 2 woorden  ...  51.282051
+3              gebruikt geen zinnetjes van 2 woorden  ...  43.589744
+4  checkt zelden of de ouder/verzorger kijkt, wan...  ...  42.222222
+
+[5 rows x 5 columns]
+2025-02-21 15:45:37,893 - INFO - Verwerkingstijd: 8.96 seconden
+2025-02-21 18:21:43,383 - INFO - Vraag: welke 5 alarmsignalen worden het vaakst aangeduid
+2025-02-21 18:21:43,384 - INFO - Gekozen analyse functie: most_alarmsignaal
+2025-02-21 18:21:43,384 - INFO - Antwoord: Het alarmsignaal 'gebruikt minder dan 10 woorden spontaan' is het meest gekozen alarmsignaal met een percentage van 35.06%. Dit alarmsignaal was 77 keer zichtbaar.
+2025-02-21 18:21:43,384 - INFO - Verwerkingstijd: 0.01 seconden
+2025-02-21 18:23:19,705 - INFO - Vraag: welke 5 alarmsignalen worden het vaakst aangeduid?
+2025-02-21 18:23:19,705 - INFO - Gekozen analyse functie: most_alarmsignaal
+2025-02-21 18:23:19,705 - INFO - Antwoord: Het alarmsignaal 'gebruikt minder dan 10 woorden spontaan' is het meest gekozen alarmsignaal met een percentage van 35.06%. Dit alarmsignaal was 77 keer zichtbaar.
+2025-02-21 18:23:19,705 - INFO - Verwerkingstijd: 0.00 seconden
+2025-02-21 18:38:20,891 - INFO - Vraag: welke 5 alarmsignalen worden het vaakst aangeduid
+2025-02-21 18:38:20,895 - INFO - Gekozen analyse functie: most_alarmsignaal
+2025-02-21 18:38:20,895 - INFO - Antwoord: Het alarmsignaal 'gebruikt minder dan 10 woorden spontaan' is het meest gekozen alarmsignaal met een percentage van 35.06%. Dit alarmsignaal was 77 keer zichtbaar.
+2025-02-21 18:38:20,895 - INFO - Verwerkingstijd: 0.01 seconden
+2025-02-21 18:38:33,612 - INFO - Vraag: welke 5 alarmsignalen worden het vaakst aangeduid
+2025-02-21 18:38:33,612 - INFO - Gekozen analyse functie: most_alarmsignaal
+2025-02-21 18:38:33,612 - INFO - Antwoord: Het alarmsignaal 'gebruikt minder dan 10 woorden spontaan' is het meest gekozen alarmsignaal met een percentage van 35.06%. Dit alarmsignaal was 77 keer zichtbaar.
+2025-02-21 18:38:33,612 - INFO - Verwerkingstijd: 0.00 seconden
+2025-02-21 18:39:47,819 - INFO - Vraag: welke 5 alarmsignalen worden het vaakst aangeduid
+2025-02-21 18:39:47,829 - INFO - Gekozen analyse functie: most_alarmsignaal
+2025-02-21 18:39:47,829 - INFO - Antwoord: Het alarmsignaal 'gebruikt minder dan 10 woorden spontaan' is het meest gekozen alarmsignaal met een percentage van 35.06%. Dit alarmsignaal was 77 keer zichtbaar.
+2025-02-21 18:39:47,830 - INFO - Verwerkingstijd: 0.01 seconden
+2025-02-21 18:40:47,338 - INFO - Vraag: welke 5 alarmsignalen worden het vaakst aangeduid
+2025-02-21 18:40:47,338 - INFO - Gekozen analyse functie: top_most_alarmsignals
+2025-02-21 18:40:47,338 - INFO - Antwoord:                                                  Vraag  Percentage gekozen keren  Aantal keer zichtbaar
+96             gebruikt minder dan 10 woorden spontaan                     35.06                     77
+0    kan zijn/haar hoofd in buiklig helemaal niet o...                     33.33                      3
+179  probeert activiteiten of spel van ouders/verzo...                     26.21                    103
+182  zondert zich af van andere kinderen (bv. in de...                     24.39                    328
+99                 reageert vaak niet op de eigen naam                     23.80                    374
+2025-02-21 18:40:47,344 - INFO - Verwerkingstijd: 0.03 seconden
+2025-02-21 18:42:50,323 - INFO - Vraag: welke 5 alarmsignalen worden het vaakst aangeduid?
+2025-02-21 18:42:50,323 - INFO - Gekozen analyse functie: top_most_alarmsignals
+2025-02-21 18:42:50,323 - INFO - Antwoord:                                           Alarmsignaal  Percentage gekozen keren  Aantal keer zichtbaar
+96             gebruikt minder dan 10 woorden spontaan                     35.06                     77
+0    kan zijn/haar hoofd in buiklig helemaal niet o...                     33.33                      3
+179  probeert activiteiten of spel van ouders/verzo...                     26.21                    103
+182  zondert zich af van andere kinderen (bv. in de...                     24.39                    328
+99                 reageert vaak niet op de eigen naam                     23.80                    374
+2025-02-21 18:42:50,323 - INFO - Verwerkingstijd: 0.00 seconden
+2025-02-21 18:43:12,714 - INFO - Vraag: welk percentage aan kinderen scoort boven de cut-off voor taalontwikkelingsstoornis
+2025-02-21 18:43:12,714 - INFO - Gekozen analyse functie: least_stoornis
+2025-02-21 18:43:12,714 - INFO - Antwoord: Het ontwikkelingsprobleem die het minst werd aangegeven als positief is 'Taalontwikkelingsprobleem'. Deze werd 125 keer gekozen.
+
+2025-02-21 18:43:12,714 - INFO - Verwerkingstijd: 0.01 seconden
+2025-02-21 18:43:36,362 - INFO - Vraag: welk percentage aan kinderen scoort boven de cut-off voor taalontwikkelingsstoornis?
+2025-02-21 18:43:36,363 - INFO - Gekozen analyse functie: least_stoornis
+2025-02-21 18:43:36,363 - INFO - Antwoord: Het ontwikkelingsprobleem die het minst werd aangegeven als positief is 'Taalontwikkelingsprobleem'. Deze werd 125 keer gekozen.
+
+2025-02-21 18:43:36,363 - INFO - Verwerkingstijd: 0.01 seconden
+2025-02-21 18:49:35,621 - WARNING - Some parameters are on the meta device because they were offloaded to the disk and cpu.
+2025-02-21 18:53:26,857 - WARNING - Some parameters are on the meta device because they were offloaded to the disk and cpu.
+2025-02-21 18:53:28,086 - INFO - Vraag: welk percentage aan kinderen scoort boven de cut-off voor taalontwikkelingsstoornis?
+2025-02-21 18:53:28,086 - INFO - Gekozen analyse functie: analyze_stoornis_specific
+2025-02-21 18:53:28,086 - INFO - Antwoord: Kinderen met dit ontwikkelingsprobleem scoorden 125 keer boven de cut-off.
+
+2025-02-21 18:53:28,086 - INFO - Verwerkingstijd: 0.02 seconden
+2025-02-21 18:54:00,720 - INFO - Vraag: welk percentage aan kinderen scoort boven de cut-off voor taalontwikkelingsstoornis?
+2025-02-21 18:54:00,720 - INFO - Gekozen analyse functie: zelden_voorkomen
+2025-02-21 18:54:00,720 - INFO - Antwoord: Er werden geen signalen gevonden.
+2025-02-21 18:54:00,720 - INFO - Verwerkingstijd: 0.01 seconden
+2025-02-21 18:54:08,333 - INFO - Vraag: welke signalen komen het vaakst voor bij kinderen die boven de cut-off scoren voor taalontwikkelingsstoornis?
+2025-02-21 18:54:08,333 - INFO - Gekozen analyse functie: zelden_voorkomen
+2025-02-21 18:54:08,333 - INFO - Antwoord: Er werden geen signalen gevonden.
+2025-02-21 18:54:08,333 - INFO - Verwerkingstijd: 0.01 seconden
+2025-02-24 12:08:47,434 - WARNING - Some parameters are on the meta device because they were offloaded to the disk and cpu.
+2025-02-24 12:09:29,285 - INFO - Vraag: hoeveel procent van de kinderen vertonen tenminste 7 signalen in autisme?
+2025-02-24 12:09:29,295 - INFO - Gekozen analyse functie: combo_most_stoornis
+2025-02-24 12:09:29,295 - INFO - Antwoord:                                                  Signal  Percentage gekozen keren
+749               gebruikt geen zinnetjes van 2 woorden                     61.54
+420   minder dan 50% van de spraakuitingen zijn duid...                     42.86
+54            kan niet op een dikke rechte lijn knippen                     41.94
+338     kan geen wie-, wat- of waar-vragen beantwoorden                     41.67
+2713  kan niet zijwaarts stappen waarbij hij/zij zic...                     41.67
+683               gebruikt geen zinnetjes van 3 woorden                     41.30
+16        gebruikt geen zinnetjes van 4 woorden of meer                     40.71
+2025-02-24 12:09:29,299 - INFO - Verwerkingstijd: 0.87 seconden
+2025-02-24 12:10:05,409 - WARNING - Some parameters are on the meta device because they were offloaded to the disk and cpu.
+2025-02-24 12:10:07,350 - INFO - Vraag: hoeveel procent van de kinderen vertonen tenminste 7 signalen in autisme?
+2025-02-24 12:10:07,350 - INFO - Gekozen analyse functie: combo_most_stoornis
+2025-02-24 12:10:07,350 - INFO - Antwoord:                                                  Signal  Percentage gekozen keren
+749               gebruikt geen zinnetjes van 2 woorden                     61.54
+420   minder dan 50% van de spraakuitingen zijn duid...                     42.86
+54            kan niet op een dikke rechte lijn knippen                     41.94
+338     kan geen wie-, wat- of waar-vragen beantwoorden                     41.67
+2713  kan niet zijwaarts stappen waarbij hij/zij zic...                     41.67
+683               gebruikt geen zinnetjes van 3 woorden                     41.30
+16        gebruikt geen zinnetjes van 4 woorden of meer                     40.71
+2025-02-24 12:10:07,352 - INFO - Verwerkingstijd: 0.81 seconden
+2025-02-24 12:19:46,428 - WARNING - Some parameters are on the meta device because they were offloaded to the cpu and disk.
+2025-02-24 12:20:22,100 - INFO - Vraag: hoeveel procent van de kinderen heeft tenminste 8 signalen in autisme?
+2025-02-24 12:20:22,100 - INFO - Gekozen analyse functie: how_many_signal
+2025-02-24 12:20:22,100 - INFO - Antwoord: Empty DataFrame
+Columns: []
+Index: []
+2025-02-24 12:20:22,112 - INFO - Verwerkingstijd: 0.06 seconden
+2025-02-24 12:23:11,383 - INFO - Vraag: hoeveel procent van de kinderen heeft tenminste 8 signalen in autisme?
+2025-02-24 12:23:11,384 - INFO - Gekozen analyse functie: how_many_signal
+2025-02-24 12:23:11,384 - INFO - Antwoord: Er zijn geen kinderen gevonden met tenminste 8 signalen voor het ontwikkelingsprobleem autism.
+2025-02-24 12:23:11,384 - INFO - Verwerkingstijd: 0.02 seconden
+2025-02-24 12:23:24,468 - INFO - Vraag: hoeveel procent van de kinderen heeft tenminste 2 signalen in autisme?
+2025-02-24 12:23:24,468 - INFO - Gekozen analyse functie: how_many_signal
+2025-02-24 12:23:24,468 - INFO - Antwoord: Er zijn geen kinderen gevonden met tenminste 2 signalen voor het ontwikkelingsprobleem autism.
+2025-02-24 12:23:24,468 - INFO - Verwerkingstijd: 0.01 seconden
+2025-02-24 12:28:32,632 - INFO - Vraag: hoeveel procent van de kinderen heeft tenminste 2 signalen in autisme?
+2025-02-24 12:28:32,632 - INFO - Gekozen analyse functie: how_many_signal
+2025-02-24 12:28:32,632 - INFO - Antwoord: Het aantal kinderen met meer dan 2 signalen is: 211Dit bedraagt een percentage van 55.09% van de kinderen.
+2025-02-24 12:28:32,632 - INFO - Verwerkingstijd: 0.61 seconden
+2025-02-24 12:33:34,725 - INFO - Vraag: hoeveel procent van de kinderen heeft tenminste 2 signalen in autisme?
+2025-02-24 12:33:34,725 - INFO - Gekozen analyse functie: how_many_signal
+2025-02-24 12:33:34,725 - INFO - Antwoord: Het aantal kinderen met meer dan 2 signalen is: 211.
+Dit bedraagt een percentage van 55.09% van het totaal aantal kinderen.Dit bedraagt een percentage van 100.00% van het totaal aantal kinderen die boven de cut-off scoorden voor autism.
+2025-02-24 12:33:34,727 - INFO - Verwerkingstijd: 0.60 seconden
+2025-02-24 12:37:11,645 - INFO - Vraag: hoeveel procent van de kinderen heeft tenminste 8 signalen in autisme?
+2025-02-24 12:37:11,645 - INFO - Gekozen analyse functie: how_many_signal
+2025-02-24 12:37:11,645 - INFO - Antwoord: Het aantal kinderen met meer dan 8 signalen is: 144.
+Dit bedraagt een percentage van 37.60% van het totaal aantal kinderen.Dit bedraagt een percentage van 68.25% van het totaal aantal kinderen die boven de cut-off scoorden voor autism.
+2025-02-24 12:37:11,645 - INFO - Verwerkingstijd: 0.60 seconden

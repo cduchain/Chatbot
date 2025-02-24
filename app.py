@@ -5,7 +5,34 @@ from joblib import load
 import streamlit as st
 from typing import Optional
 import re
+import time
+import logging
+import os
 
+logging.basicConfig(
+    filename='chatbot.log',       
+    level=logging.INFO,          
+    format='%(asctime)s - %(levelname)s - %(message)s')
+
+if not logging.getLogger().hasHandlers():
+    logging.basicConfig(
+        filename='chatbot.log',
+        level=logging.INFO,
+        format='%(asctime)s - %(levelname)s - %(message)s')
+    
+def log_interaction(user_question, analysis_function_name, analysis_response, processing_time):
+    logging.info("Vraag: %s", user_question)
+    logging.info("Gekozen analyse functie: %s", analysis_function_name)
+    logging.info("Antwoord: %s", analysis_response)
+    logging.info("Verwerkingstijd: %.2f seconden", processing_time)
+
+def display_logs():
+    try:
+        with open('chatbot.log', 'r') as log_file:
+            log_content = log_file.read()
+        st.text_area("Log bestand", log_content, height=300)
+    except FileNotFoundError:
+        st.write("Logbestand niet gevonden.")
 
 
 clf_freq = load('decision_tree_freq.joblib')
@@ -30,8 +57,8 @@ def run_main_streamlit(
     max_gen_len: Optional[int] = 256,
     ):
     
-    st.title("Developmental Disorder Chatbot")
-    st.write("Hallo! Typ 'exit' om te stoppen.")
+    st.title("Wegwijzer Ontwikkelingszorgen Data-analyse Chatbot")
+    
     
     tokenizer = AutoTokenizer.from_pretrained(model_name)
     model = AutoModelForCausalLM.from_pretrained(model_name, device_map="auto", offload_folder="model")
@@ -50,9 +77,13 @@ def run_main_streamlit(
         "Slider 3 - Stel een waarde in voor het aantal alarmsignalen.", 
         min_value=0, max_value=20, value=1, step=1)
 
-    if user_input.lower() == "exit":
-        st.write("Tot ziens!")
-        return
+    st.write(f"**Je type vragen op dit moment: {user_input}. Zorg ervoor dat dit zeker juist is.**")
+    if user_input == 'frequentie':
+        st.write("**Je vragen mogen slechts over 1 aspect gaan uit de volgende lijst: (alarm)signalen, domein, relatie of ontwikkelingsprobleem.**")
+    if user_input == 'verbanden':
+        st.write("**Je vragen moeten over minimum 2 aspecten gaan uit de volgende lijst: (alarm)signalen, domein, relatie of ontwikkelingsprobleem.**")
+    if user_input == 'trend':
+        st.write("**Dit type vragen moet betrekking hebben op veranderingen over tijd of de evolutie van het signaal binnen zijn bepaald leeftijdsinterval.**")
     
     if data_file:
         if signal_file:
@@ -60,9 +91,11 @@ def run_main_streamlit(
     else:
         data, signal_df = None, None
     
-    specific_question = st.text_input("Dankuwel, wat is de vraag?")
+    specific_question = st.text_input("Hallo! Waarmee kan ik jou helpen?")
     
     if specific_question:
+        start_time = time.perf_counter()
+        specific_question = specific_question.lower()
         if user_input == "frequentie":
             clf = clf_freq
             vectorizer = vectorizer_freq
@@ -94,9 +127,17 @@ def run_main_streamlit(
                 st.write(f"Bot: {analysis_response}")
         else:
             st.write("Sorry, ik kan de gevraagde analyse niet vinden.")
+
+        end_time = time.perf_counter() 
+        processing_time = end_time - start_time
+        log_interaction(specific_question, analysis_function_name, analysis_response, processing_time)
     
 if __name__ == "__main__":
     run_main_streamlit(
         model_name="meta-llama/Llama-3.2-1B-Instruct",
-        data_file="data_file.csv"
-    )
+        data_file="data_file.csv")
+
+
+
+if st.sidebar.checkbox("Toon logs"):
+    display_logs()
