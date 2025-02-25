@@ -410,7 +410,7 @@ def top_most_signals(data: pd.DataFrame, specific_question, signal_df: pd.DataFr
     if number is None:
         number  = 5
     top_signals_df = signal_df.sort_values(by='Percentage gekozen keren', ascending=False).head(number)
-    return top_signals_df.rename(columns={'Vraag': 'Signaal'})[['Alarmsignaal', 'Percentage gekozen keren', 'Aantal keer zichtbaar']]
+    return top_signals_df.rename(columns={'Vraag': 'Signaal'})[['Is een alarmsignaal', 'Percentage gekozen keren', 'Aantal keer zichtbaar']]
 
 def top_least_signals(data: pd.DataFrame, specific_question, signal_df: pd.DataFrame) -> pd.DataFrame:
     number = extract_number_from_question(specific_question)
@@ -419,7 +419,7 @@ def top_least_signals(data: pd.DataFrame, specific_question, signal_df: pd.DataF
     if number is None:
         number  = 5
     top_signals_df = signal_df.sort_values(by='Percentage gekozen keren', ascending=True).head(number)
-    return top_signals_df.rename(columns={'Vraag': 'Signaal'})[['Alarmsignaal', 'Percentage gekozen keren', 'Aantal keer zichtbaar']]
+    return top_signals_df.rename(columns={'Vraag': 'Signaal'})[['Is een alarmsignaal', 'Percentage gekozen keren', 'Aantal keer zichtbaar']]
 
 def signals_below_percentage(data: pd.DataFrame, specific_question, signal_df: pd.DataFrame) -> pd.DataFrame:
     number = extract_percentage_from_question(specific_question)
@@ -447,7 +447,7 @@ def top_most_alarmsignals(data: pd.DataFrame, specific_question, signal_df: pd.D
         number = 5 
     alarm_signals = signal_df[signal_df['Is een alarmsignaal'] == True]
     top_signals_df = alarm_signals.sort_values(by='Percentage gekozen keren', ascending=False).head(number)
-    return top_signals_df.rename(columns={'Vraag': 'Alarmsignaal'})[['Alarmsignaal', 'Percentage gekozen keren', 'Aantal keer zichtbaar']]
+    return top_signals_df.rename(columns={'Vraag': 'Alarmsignaal'})[['Is een alarmsignaal', 'Percentage gekozen keren', 'Aantal keer zichtbaar']]
 
 def top_least_alarmsignals(data: pd.DataFrame, specific_question, signal_df: pd.DataFrame) -> pd.DataFrame:
     number = extract_number_from_question(specific_question)
@@ -457,7 +457,7 @@ def top_least_alarmsignals(data: pd.DataFrame, specific_question, signal_df: pd.
         number = 5
     alarm_signals = signal_df[signal_df['Is een alarmsignaal'] == True]
     top_signals_df = alarm_signals.sort_values(by='Percentage gekozen keren', ascending=True).head(number)
-    return top_signals_df.rename(columns={'Vraag': 'Alarmsignaal'})[['Alarmsignaal', 'Percentage gekozen keren', 'Aantal keer zichtbaar']]
+    return top_signals_df.rename(columns={'Vraag': 'Alarmsignaal'})[['Is een alarmsignaal', 'Percentage gekozen keren', 'Aantal keer zichtbaar']]
 
 def signals_alarm_below_percentage(data: pd.DataFrame, specific_question, signal_df: pd.DataFrame) -> pd.DataFrame:
     number = extract_percentage_from_question(specific_question)
