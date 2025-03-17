@@ -465,12 +465,15 @@ def most_element(data: pd.DataFrame, specific_question, signal_df: pd.DataFrame)
         top_signals_df = signal_df.sort_values(by='Percentage gekozen keren', ascending=False).head(number)
         return top_signals_df.rename(columns={'Vraag': 'Signaal'})[['Signaal', 'Percentage gekozen keren', 'Aantal keer zichtbaar']]
     elif re.search(r'\b(alarmsignaal)\b', specific_question) and signaal is None:
-        filtered_signal_df = signal_df[signal_df['Is een alarmsignaal'] == True]
-        filtered_signal_df = filtered_signal_df.reset_index(drop=True)
-        max_percentage_row = filtered_signal_df.loc[signal_df['Percentage gekozen keren'].idxmax()]
-        vraag = max_percentage_row['Vraag']
-        aantal_keer_zichtbaar = max_percentage_row['Aantal keer zichtbaar']
-        percentage_gekozen = max_percentage_row['Percentage gekozen keren']
+        alarm_signals = signal_df[signal_df['Is een alarmsignaal'] == True]
+        result_df = alarm_signals[['Vraag', 'Aantal keer zichtbaar', 'Percentage gekozen keren']].copy()
+        result_df.columns = ['Alarmsignaal', 'Aantal keer zichtbaar', 'Percentage gekozen keren (%)']
+        result_df["Percentage gekozen keren (%)"] = result_df["Percentage gekozen keren (%)"].round(2)
+        result_df = result_df.sort_values(by='Percentage gekozen keren (%)', ascending=False)
+        top_signal = result_df.iloc[0]
+        vraag = top_signal['Signaal']
+        aantal_keer_zichtbaar = top_signal['Aantal keer zichtbaar']
+        percentage_gekozen = top_signal['Percentage gekozen keren (%)']
         analysis_result = f"Het alarmsignaal '{vraag}' is het meest gekozen signaal met een percentage van {percentage_gekozen}%. Dit signaal was {aantal_keer_zichtbaar} keer zichtbaar."
         return analysis_result 
     elif re.search(r'\b(alarmsignalen)\b', specific_question) and signaal is None:
