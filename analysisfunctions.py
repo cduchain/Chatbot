@@ -471,7 +471,7 @@ def most_element(data: pd.DataFrame, specific_question, signal_df: pd.DataFrame)
         result_df["Percentage gekozen keren (%)"] = result_df["Percentage gekozen keren (%)"].round(2)
         result_df = result_df.sort_values(by='Percentage gekozen keren (%)', ascending=False)
         top_signal = result_df.iloc[0]
-        vraag = top_signal['Signaal']
+        vraag = top_signal['Alarmsignaal']
         aantal_keer_zichtbaar = top_signal['Aantal keer zichtbaar']
         percentage_gekozen = top_signal['Percentage gekozen keren (%)']
         analysis_result = f"Het alarmsignaal '{vraag}' is het meest gekozen signaal met een percentage van {percentage_gekozen}%. Dit signaal was {aantal_keer_zichtbaar} keer zichtbaar."
