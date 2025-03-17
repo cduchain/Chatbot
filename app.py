@@ -110,7 +110,7 @@ def run_main_streamlit(
             
 
         if category == 'other':
-            confidence_threshold = 0.95
+            confidence_threshold = 0.8
             X_keywords = vectorizer.transform([specific_question])
             X = X_keywords
 
