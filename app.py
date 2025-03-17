@@ -1,50 +1,24 @@
 from analysisfunctions import *
-from preprocessing import preprocess_data
+from preprocessing import preprocess_data, determine_question_type, filter_question, clean_result
 from transformers import AutoTokenizer, AutoModelForSequenceClassification, Trainer, TrainingArguments, AutoModelForCausalLM
 from joblib import load
 import streamlit as st
 from typing import Optional
 import re
 import time
+from itertools import combinations
 import logging
 import os
-
-logging.basicConfig(
-    filename='chatbot.log',       
-    level=logging.INFO,          
-    format='%(asctime)s - %(levelname)s - %(message)s')
-
-if not logging.getLogger().hasHandlers():
-    logging.basicConfig(
-        filename='chatbot.log',
-        level=logging.INFO,
-        format='%(asctime)s - %(levelname)s - %(message)s')
-    
-def log_interaction(user_question, analysis_function_name, analysis_response, processing_time):
-    logging.info("Vraag: %s", user_question)
-    logging.info("Gekozen analyse functie: %s", analysis_function_name)
-    logging.info("Antwoord: %s", analysis_response)
-    logging.info("Verwerkingstijd: %.2f seconden", processing_time)
-
-def display_logs():
-    try:
-        with open('chatbot.log', 'r') as log_file:
-            log_content = log_file.read()
-        st.text_area("Log bestand", log_content, height=300)
-    except FileNotFoundError:
-        st.write("Logbestand niet gevonden.")
+import scipy.stats as stats
 
 
-clf_freq = load('decision_tree_freq.joblib')
-vectorizer_freq = load('tfidf_vectorizer_freq.joblib')
-label_encoder_func_freq = load('label_encoder_func_freq.joblib')
-clf_con = load('decision_tree_verb.joblib')
-vectorizer_con = load('tfidf_vectorizer_verb.joblib')
-label_encoder_func_con = load('label_encoder_func_verb.joblib')
-clf_trend = load('decision_tree_trend.joblib')
-vectorizer_trend = load('tfidf_vectorizer_trend.joblib')
-label_encoder_func_trend = load('label_encoder_func_trend.joblib')
-        
+clf_both = load('decision_tree_both.joblib')
+vectorizer_both = load('tfidf_vectorizer_both.joblib')
+label_encoder_func_both = load('label_encoder_func_both.joblib')
+clf_comp = load('decision_tree_comp.joblib')
+vectorizer_comp = load('tfidf_vectorizer_comp.joblib')
+encoder_comp = load('label_encoder_func_comp.joblib')
+       
 def run_main_streamlit(
     model_name: str = "meta-llama/Llama-3.2-1B-Instruct",  
     data_file: str = "data_file.csv",
@@ -57,15 +31,34 @@ def run_main_streamlit(
     max_gen_len: Optional[int] = 256,
     ):
     
+    start_time_load = time.perf_counter()
     st.title("Wegwijzer Ontwikkelingszorgen Data-analyse Chatbot")
     
+    function_descriptions = {
+    'analyze_freq': 'Hoeveel keer werd er voor elke type van 1 element gekozen?',
+    'range_signal' : 'Wat is het leeftijdsinterval voor een specifiek signaal/alle signalen?',
+    'most_element': 'Welke type van een element werd het meest gekozen of hoeveel keer werd een specifiek gekozen type van het element gekozen.? Wat zijn de top meest gekozen (alarm)signalen?',
+    'least_element': 'Wat is het minste gekozen type van het element?',
+    'signals_percentage': 'Welke (alarm)signalen komen voor in minder dan X% van de gevallen? + kan filteren op types van elementen',
+    'signal_in_range' : 'Welke (alarm)signalen worden vaker/minder vaak gekozen bij kinderen in de eerste x maanden van het leeftijdsinterval?',
+    'combo_function': 'Wat zijn de meest/minst aangeduide signalen/elementen voor de leeftijd x-x maanden, relatie x, ontwikkelingsprobleem x en subdomein x in domein x? + Uit welke (sub)domeinen komen de meeste vragen?',
+    'combo_signal' : 'Welke signalen komeen meer/minder dan x% van de tijd smaen voor? Welke signalen komen minst/vaakst samen voor?',
+    'how_many_alarm': 'Hoeveel kinderen vertonen ten minste X alarmsignaal?',
+    'combo_howmany': 'Hoeveel signalen vertonen kinderen gemiddeld, afhankelijk van gekozen elementen?',
+    'combo_correlations' : 'Wat is de correlatie tussen de specifiek type van element en leeftijd?',
+    'time_more': 'Welke signalen zijn in de afgelopen X maanden vaker/minder gemeld dan voorheen? + filteren op types van elementen',
+    'time_evolutie_element' : 'Zijn er elementen die vaker gekozen worden sinds X maanden geleden?',
+    'time_element' : 'Hoeveel keer werd elk element/specifiek type van element gekozen in laatste x maanden?',
+    'time_data': 'Hoeveel nieuwe data is er (elke maand) toegevoegd in de afgelopen X maanden?',
+    'combo_atleast': 'Hoeveel kinderen hebben tenminste x (alarm)signalen? + filteren op types van elementen',
+    'combo_comparison' : 'Vergelijkt leeftijd of relaties op basis van andere of geen elementen.'}
     
-    tokenizer = AutoTokenizer.from_pretrained(model_name)
-    model = AutoModelForCausalLM.from_pretrained(model_name, device_map="auto", offload_folder="model")
-
-    user_input = st.sidebar.selectbox(
-    "Welk soort vraag is het?", 
-    ["frequentie", "verbanden", "trend"])
+    @st.cache_resource
+    def load_model(model_name):
+        tokenizer = AutoTokenizer.from_pretrained(model_name)
+        model = AutoModelForCausalLM.from_pretrained(model_name, device_map="auto", offload_folder="model")
+        return tokenizer, model
+    tokenizer, model = load_model(model_name)
     
     slider_1 = st.sidebar.slider(
         "Slider 1 - Stel een waarde in voor een cut-off waarde voor 1 enkele stoornis.", 
@@ -77,67 +70,99 @@ def run_main_streamlit(
         "Slider 3 - Stel een waarde in voor het aantal alarmsignalen.", 
         min_value=0, max_value=20, value=1, step=1)
 
-    st.write(f"**Je type vragen op dit moment: {user_input}. Zorg ervoor dat dit zeker juist is.**")
-    if user_input == 'frequentie':
-        st.write("**Je vragen mogen slechts over 1 aspect gaan uit de volgende lijst: (alarm)signalen, domein, relatie of ontwikkelingsprobleem.**")
-    if user_input == 'verbanden':
-        st.write("**Je vragen moeten over minimum 2 aspecten gaan uit de volgende lijst: (alarm)signalen, domein, relatie of ontwikkelingsprobleem.**")
-    if user_input == 'trend':
-        st.write("**Dit type vragen moet betrekking hebben op veranderingen over tijd of de evolutie van het signaal binnen zijn bepaald leeftijdsinterval.**")
+    @st.cache_data
+    def preprocess_data_cached(data_file, signal_file, domain_file, slider_1, slider_2, slider_3):
+        return preprocess_data(data_file, signal_file, domain_file, slider_1, slider_2, slider_3)
+    data, signal_df = preprocess_data_cached(data_file, signal_file, domain_file, slider_1, slider_2, slider_3)
     
-    if data_file:
-        if signal_file:
-            data, signal_df = preprocess_data(data_file, signal_file, domain_file, slider_1, slider_2, slider_3)
-    else:
-        data, signal_df = None, None
-    
+    end_time_load = time.perf_counter()
     specific_question = st.text_input("Hallo! Waarmee kan ik jou helpen?")
+    start_time_2 = time.perf_counter()
+    category = determine_question_type(specific_question)
     
     if specific_question:
-        start_time = time.perf_counter()
         specific_question = specific_question.lower()
-        if user_input == "frequentie":
-            clf = clf_freq
-            vectorizer = vectorizer_freq
-            label_encoder_func = label_encoder_func_freq
-        elif user_input == "verbanden":
-            clf = clf_con
-            vectorizer = vectorizer_con
-            label_encoder_func = label_encoder_func_con
-        elif user_input == "trend":
-            clf = clf_trend
-            vectorizer = vectorizer_trend
-            label_encoder_func = label_encoder_func_trend
+        specific_question = filter_question(specific_question)
+        st.write(f'herschreven vraag: {specific_question}')
+        if category == "other":
+            clf = clf_both
+            vectorizer = vectorizer_both
+            label_encoder_func = label_encoder_func_both
+        
+        filtered_data = filter_data(data, specific_question)
+        if category == "verbanden":   
+            if any(word in specific_question for word in ['hoeveel', 'aantal']):
+                analysis_function_name = 'combo_howmany'
+            elif any(word in specific_question for word in ['ten minste', 'minstens', 'minimum']):
+                analysis_function_name = 'combo_atleast'
+            elif any(word in specific_question for word in ['correlatie', 'correlaties']):
+                analysis_function_name = 'combo_correlation'
+            elif any(word in specific_question for word in ['%', 'procent']):
+                analysis_function_name = 'signals_percentage'
+            elif any(word in specific_question for word in ['afgelopen', 'laatste', 'voorbije', 'vorige']):
+                analysis_function_name = 'time_more'
+            elif any(word in specific_question for word in ['tegelijk', 'samen', 'hetzelfde moment','alleen', 'uitgezonderd', 'individueel']):
+                analysis_function_name = 'combo_signal'
+            elif ('meer' in specific_question and 'dan' in specific_question) or ('minder' in specific_question and 'dan' in specific_question) or ('vergelijk' in specific_question):
+                analysis_function_name = 'combo_comparison'
+            else:
+                analysis_function_name = 'combo_function'
+            
 
-        X_keywords = vectorizer.transform([specific_question])
-        X = X_keywords
+        if category == 'other':
+            confidence_threshold = 0.95
+            X_keywords = vectorizer.transform([specific_question])
+            X = X_keywords
 
-        y_pred = clf.predict(X)
-        analysis_function_name = label_encoder_func.inverse_transform(y_pred)[0]
-        st.write(f"The predicted function name is: {analysis_function_name}")
+            y_prob = clf.predict_proba(X)  
+            max_prob = np.max(y_prob) 
+            y_pred = clf.predict(X)
+            analysis_function_name = label_encoder_func.inverse_transform(y_pred)[0]
+            feature_names = vectorizer.get_feature_names_out()
+            important_words = [feature_names[i] for i in X.nonzero()[1]]
+            
+            st.write(f"Voorspelde functie: {analysis_function_name}\n")
+            st.write(f"Waarom deze functie? De chatbot vond de volgende belangrijke woorden in jouw vraag: {', '.join(important_words)}\n")
 
-    
-        if analysis_function_name:
+            if max_prob < confidence_threshold:
+                st.write("**ik ben niet zeker welke funnctie bij je vraag past**")
+
+        end_time_2 = time.perf_counter()
+        elapsed_time_2 = end_time_2 - start_time_2
+        start_time = time.perf_counter()
+
+        if analysis_function_name == 'combo_comparison':
             analysis_function = globals().get(analysis_function_name)
-            if analysis_function and data is not None:
-                analysis_response = analysis_function(data, specific_question, signal_df)
+            analysis_response = analysis_function(data, specific_question, signal_df, clf_comp, vectorizer_comp, encoder_comp)
+            function_description = function_descriptions.get(analysis_function_name, "No description available.")
             if isinstance(analysis_response, pd.DataFrame):
                 st.table(analysis_response)  
             else:
-                st.write(f"Bot: {analysis_response}")
+                analysis_response = str(analysis_response).strip()
+                st.write(f"**{analysis_response}**") 
         else:
-            st.write("Sorry, ik kan de gevraagde analyse niet vinden.")
+            if analysis_function_name:
+                function_description = function_descriptions.get(analysis_function_name, "No description available.")
+                analysis_function = globals().get(analysis_function_name)
+                if analysis_function and data is not None:
+                    analysis_response = analysis_function(data, specific_question, signal_df)
+                    analysis_response = clean_result(analysis_response)
+                    if isinstance(analysis_response, pd.DataFrame):
+                        st.table(analysis_response)  
+                    else:
+                        analysis_response = str(analysis_response).strip()
+                        st.write(f"**{analysis_response}**")
+                elapsed_time_3 = end_time_load - start_time_load 
+                end_time = time.perf_counter()  
+                elapsed_time = end_time - start_time 
 
-        end_time = time.perf_counter() 
-        processing_time = end_time - start_time
-        log_interaction(specific_question, analysis_function_name, analysis_response, processing_time)
-    
+            st.write(f"Voorspelde functie: {analysis_function_name}\n")
+            st.write(f"Wat doet deze functie? {function_description}")
+            st.write(f"De analyse duurde {elapsed_time:.2f} seconden.")
+            st.write(f"De functie vinden duurde {elapsed_time_2:.2f} seconden.")
+            st.write(f"De chatbot laden duurde {elapsed_time_3:.2f} seconden.")
+        
 if __name__ == "__main__":
     run_main_streamlit(
         model_name="meta-llama/Llama-3.2-1B-Instruct",
         data_file="data_file.csv")
-
-
-
-if st.sidebar.checkbox("Toon logs"):
-    display_logs()

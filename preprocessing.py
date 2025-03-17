@@ -2,13 +2,60 @@ import pandas as pd
 import json
 import re
 
+import re
+
+def filter_question(specific_question):
+    replacements = {
+        "zorgcoördinator": "zorgcoördinator of zorgleerkracht",
+        "zorgleerkracht": "zorgcoördinator of zorgleerkracht",
+        "zorgcoördinators": "zorgcoördinator of zorgleerkracht",
+        "zorgleerkrachten": "zorgcoördinator of zorgleerkracht",
+        "huisartsen" : "huisarts",
+        "artsen": "huisarts",
+        "arts": "huisarts",
+        "ouders": "ouder",
+        "kinderbegeleiders": "kinderbegeleider of verantwoordelijke kinderopvang",
+        "kinderopvang": "kinderbegeleider of verantwoordelijke kinderopvang",
+        "kinderbegeleider": "kinderbegeleider of verantwoordelijke kinderopvang",
+        "leerkrachten": "leerkracht",
+        "psychologen": "psycholoog, orthopedagoog, logopedist, kinesitherapeut, ergotherapeut, thuisbegeleider",
+        "orthopedagogen": "psycholoog, orthopedagoog, logopedist, kinesitherapeut, ergotherapeut, thuisbegeleider",
+        "logopedisten": "psycholoog, orthopedagoog, logopedist, kinesitherapeut, ergotherapeut, thuisbegeleider",
+        "kinesitherapeuten": "psycholoog, orthopedagoog, logopedist, kinesitherapeut, ergotherapeut, thuisbegeleider",
+        "thuisbegeleiders": "psycholoog, orthopedagoog, logopedist, kinesitherapeut, ergotherapeut, thuisbegeleider",
+        "psycholoog": "psycholoog, orthopedagoog, logopedist, kinesitherapeut, ergotherapeut, thuisbegeleider",
+        "ergotherapeut": "psycholoog, orthopedagoog, logopedist, kinesitherapeut, ergotherapeut, thuisbegeleider",
+        "orthopedagoog": "psycholoog, orthopedagoog, logopedist, kinesitherapeut, ergotherapeut, thuisbegeleider",
+        "logopedist": "psycholoog, orthopedagoog, logopedist, kinesitherapeut, ergotherapeut, thuisbegeleider",
+        "thuisbegeleider": "psycholoog, orthopedagoog, logopedist, kinesitherapeut, ergotherapeut, thuisbegeleider",
+        "kinesitherapeut": "psycholoog, orthopedagoog, logopedist, kinesitherapeut, ergotherapeut, thuisbegeleider",
+        "familielid": "familie",
+        "familieleden": "familie",
+        "andere artsen": "andere arts",
+        "pediators": "pediator",
+        "motorisch domein": "motoriek",
+        "jarige": "jaar",
+        "-jarige": " jaar",
+        "één": "1",
+        "twee": "2",
+        "drie": "3",
+        "vier": "4",
+        "vijf": "5",
+        "zes": "6",
+        "zeven": "7",
+        "acht": "8",
+        "negen": "9",
+        "tien": "10"}
+    for word, replacement in replacements.items():
+        specific_question = re.sub(rf"\b{re.escape(word)}\b", replacement, specific_question)
+    
+    return specific_question
+
+
 def clean_item(item):
-    # If the item is a list, recursively clean each element.
     if isinstance(item, list):
         return [clean_item(subitem) for subitem in item]
-    # If it's a string, clean it.
     elif isinstance(item, str):
-        # Use Unicode escapes to remove non-breaking spaces and other control characters.
         cleaned = re.sub(r'[\u0000-\u001F\u007F\u00A0]', '', item)
         return cleaned.strip()
     else:
@@ -16,14 +63,55 @@ def clean_item(item):
 
 def clean_dataframe(df: pd.DataFrame) -> pd.DataFrame:
     for column in df.select_dtypes(include=['object']).columns:
-        # Apply cleaning function to each cell in the column.
         df[column] = df[column].apply(clean_item)
     return df
 
+def determine_question_type(user_input):
+    aspects_1 = ["signalen", "domein", "domeinen", "relaties", "relatie", "ontwikkelingsprobleem",
+                "ontwikkelingsproblemen","ontwikkelingsstoornis","ontwikkelingsstoornissen", "leeftijd", "leeftijdsgroep",
+                "leeftijdscategorie", 'leeftijdsgroepen', "leeftijdscategorieën","stoornis"
+                "stoornissen", "signaal", "subdomein", "subdomeinen"]
+    aspect_count = sum(1 for aspect in aspects_1 if re.search(rf"\b{aspect}\b", user_input, re.IGNORECASE))
+    if 'domein' not in user_input and 'domeinen' not in user_input:
+        aspects_2 = ["motoriek", "taal en/of communicatie", "sociale vaardigheden","gedrag en spel"]
+        if any(re.search(rf"\b{aspect}\b", user_input, re.IGNORECASE) for aspect in aspects_2):
+            aspect_count += 1
+    if not any(word in user_input for word in ['ontwikkelingsproblemen', 'ontwikkelingsprobleem', 'ontwikkelingsstoornissen', 
+                                               'ontwikkelingsstoornis', 'stoornis', 'stoornissen']):
+        aspects_3 = ["autisme","taalontwikkelingsstoornis", "taalontwikkelingsprobleem","motorische ontwikkelingsstoornis", 
+                "motorische ontwikkelingsproblemen", "motorisch ontwikkelingsprobleem", 'motorische problemen', 'taalproblemen',
+                  'taalprobleem', 'motorisch probleem']
+        if any(re.search(rf"\b{aspect}\b", user_input, re.IGNORECASE) for aspect in aspects_3):
+            aspect_count += 1
+    if 'relatie' not in user_input and 'relaties' not in user_input:
+        aspects_4 = ['ouder', 'kinderbegeleider of verantwoordelijke kinderopvang', 'clb', 'leerkracht', 
+                'psycholoog, orthopedagoog, logopedist, kinesitherapeut, ergotherapeut, thuisbegeleider',
+                'huisarts', 'familie', 'zorgcoördinator of zorgleerkracht', 'ander', 'andere arts', 
+                'kind&gezin', 'andere functie op school', 'pediater']
+        if any(re.search(rf"\b{aspect}\b", user_input, re.IGNORECASE) for aspect in aspects_4):
+            aspect_count += 1
+    if not any(word in user_input for word in ["leeftijd", "leeftijdsgroep","leeftijdscategorie", 'leeftijdsgroepen', "leeftijdscategorieën"]):
+        if not any(word in user_input for word in ["afgelopen", "laatste", "toename", "verandering", "evolutie", "trend", "over tijd", "periode", "grenzen", "binnen"]):
+            aspects_5 = ["maanden","maand", "jaar"]
+            if any(re.search(rf"\b{aspect}\b", user_input, re.IGNORECASE) for aspect in aspects_5):
+                aspect_count += 1
+    if aspect_count >= 2:
+        return "verbanden"
+    else:
+        return "other"
+
+def clean_result(result):
+    if isinstance(result, pd.DataFrame):
+        numeric_cols = result.select_dtypes(include=['number']).columns
+        result[numeric_cols] = result[numeric_cols].round(0).astype(int)
+        return result
+    elif isinstance(result, str):
+        return re.sub(r'\d+\.\d+', lambda x: str(round(float(x.group()))), result)
+    
 def preprocess_data(data_file: str, signal_file: str, domein_file: str, slider_1, slider_2, slider_3) -> pd.DataFrame:
     df = pd.read_csv(data_file, sep=';', on_bad_lines='skip')
     df['timestamp'] = pd.to_datetime(df['Created At'], format='%Y-%m-%dT%H:%M:%S%z', errors='coerce')
-    gegevens = pd.DataFrame(df.iloc[:, 11])
+    gegevens = df[['Gegevens', 'Bent u van plan om het advies dat u kreeg via de webtool te volgen?']].copy()
     data_rows = []
     
     for index, row in gegevens.iterrows():
@@ -55,11 +143,11 @@ def preprocess_data(data_file: str, signal_file: str, domein_file: str, slider_1
             'language_disorder': language_disorder,
             'motoric_disorder': motoric_disorder,
             'ass_or_multiple_disorder': ass_or_multiple_disorder,
-            'timestamp': df.loc[index, 'timestamp']
-        })
+            'timestamp': df.loc[index, 'timestamp'],
+            'advies_opvolgen': row['Bent u van plan om het advies dat u kreeg via de webtool te volgen?']})
     print(f"Total rows appended: {len(data_rows)}")
     processed_df = pd.DataFrame(data_rows)
-    processed_df.drop(columns=['referrals', 'screener_answers', 'language_disorder', 'motoric_disorder', 'ass_or_multiple_disorder'], inplace=True)
+    processed_df.drop(columns=['referrals', 'language_disorder', 'motoric_disorder', 'ass_or_multiple_disorder'], inplace=True)
     processed_df['timestamp'] = pd.to_datetime(processed_df['timestamp'], utc=True, errors='coerce')
     bins = [0, 6, 12, 18, 24, 30, 36, 42, 48, 54, 60, 66, 72, 78, 84]
     labels = list(range(len(bins) - 1))
