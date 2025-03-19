@@ -281,6 +281,11 @@ def extract_month_from_question(question):
 
 #echte functies
 def analyze_freq(data: pd.DataFrame, specific_question, signal_df: pd.DataFrame) -> pd.DataFrame:
+    filtered_data = filter_data(data, specific_question)
+    if not filtered_data.equals(data):
+        aantal = len(filtered_data)
+        analysis_results = f"De Wegwijzer werd {aantal} keer ingevuld voor die specificaties."
+        return analysis_results
     if 'screener' in specific_question:
         total_responses = len(data)
         ja_count = data['screener_answers'].apply(lambda x: len(x) > 0).sum()
@@ -379,7 +384,7 @@ def range_signal(data: pd.DataFrame, specific_question, signal_df: pd.DataFrame)
         signal_df_sorted = signal_df.sort_values(by=['Minimum leeftijd', 'Maximum leeftijd'])
         signal_df_sorted = signal_df_sorted.drop(columns=['Subdomein', 'Is een alarmsignaal', 'Aantal keer zichtbaar', 'Percentage gekozen keren', 'Domein', 'Disorder'])
         return signal_df_sorted
-    elif any(word in specific_question for word in ['maandelijks', 'per maand', 'iedere maand']):
+    elif any(word in specific_question for word in ['maandelijks', 'per maand', 'iedere maand', 'per', 'per leeftijd']):
         signal_info = signal_df[signal_df['Vraag'] == signal]
         min_age = signal_info['Minimum leeftijd'].values[0]
         max_age = signal_info['Maximum leeftijd'].values[0]
@@ -747,7 +752,10 @@ def signals_percentage(data: pd.DataFrame, specific_question, signal_df: pd.Data
             if top == 2:
                 filtered_signals = percentage_df[percentage_df['Percentage gekozen keren'] > number]
         if filtered_signals.empty:
-            return f"Geen signalen komen voor in minder dan {number}% van de gevallen."
+            if top == 1:
+                return f"Geen signalen komen voor in minder dan {number}% van de gevallen."
+            else:
+                return f"Geen signalen komen voor in meer dan {number}% van de gevallen."
         return filtered_signals[['Vraag', 'Percentage gekozen keren', 'Aantal keer zichtbaar']].sort_values(
                     by='Percentage gekozen keren', ascending=False)
 
@@ -888,10 +896,14 @@ def combo_signal(data: pd.DataFrame, specific_question, signal_df: pd.DataFrame)
 def combo_function(data: pd.DataFrame, specific_question: str, signal_df: pd.DataFrame) -> pd.DataFrame:
     total_rows = len(data)
     filtered_data = filter_data(data, specific_question)
-    top = 1
+    top = 0
     if any(word in specific_question for word in ['meeste', 'meest', 'vaakste', 'vaakst', 'frequenst']):
         top = 2
-    if 'signalen' in specific_question:
+    else: 
+        top = 1
+    if any(word in specific_question for word in ['signalen', 'signaal']):
+        domein = extract_domein_in_question(specific_question)
+        stoornis = extract_stoornis_in_question(specific_question)
         if filtered_data.equals(data):
             if re.search(r'\b(domein)\b', specific_question):
                 signal_df["Impact"] = signal_df["Aantal keer zichtbaar"] * (signal_df["Percentage gekozen keren"] / 100)
@@ -912,6 +924,10 @@ def combo_function(data: pd.DataFrame, specific_question: str, signal_df: pd.Dat
         else:
             alarm = 0
             number = extract_number_from_signal_question(specific_question)
+            if 'signaal' in specific_question:
+                number = 1
+            elif number is None:
+                number = 5
             if any(word in specific_question for word in ['alarmsignalen', 'alarmsignaal']):
                 number = extract_number_from_alarm_question(specific_question)
                 alarm = 1
@@ -930,6 +946,18 @@ def combo_function(data: pd.DataFrame, specific_question: str, signal_df: pd.Dat
                         else:
                             signal_counts[signal] = 1 
             signal_count_df = pd.DataFrame(list(signal_counts.items()), columns=['Signaal', 'Aantal keer zichtbaar'])
+            if domein is not None and isinstance(domein, str):
+                domein = [domein] 
+                for signal in signal_count_df['Signaal']:
+                    signaal_domein = signal_df.loc[signal_df['Vraag'] == signal, 'Domein'].values
+                    if len(signaal_domein) == 0 or signaal_domein[0] not in domein:
+                        signal_count_df = signal_count_df[signal_count_df['Signaal'] != signal]
+            if stoornis is not None:
+                stoornis = [stoornis] 
+                for signal in signal_count_df['Signaal']:
+                    signaal_stoornis = signal_df.loc[signal_df['Vraag'] == signal, 'Disorder'].values
+                    if len(signaal_stoornis) == 0 or signaal_stoornis[0] not in domein:
+                        signal_count_df = signal_count_df[signal_count_df['Signaal'] != signal]
             signal_count_df['Percentage'] = (signal_count_df['Aantal keer zichtbaar'] / total_rows) * 100
             if top == 1:
                 signal_count_df = signal_count_df.sort_values(by='Aantal keer zichtbaar', ascending=True)
@@ -998,24 +1026,29 @@ def combo_correlation(data: pd.DataFrame, specific_question: str, signal_df: pd.
 def combo_howmany(data: pd.DataFrame, specific_question: str, signal_df: pd.DataFrame) -> str:
     filtered_data = filter_data(data, specific_question)
     subdomein = extract_subdomain_from_question(specific_question)
-    if subdomein is None:
-        total_signals_per_row = filtered_data['signals'].apply(lambda x: len(x) if isinstance(x, list) else 0)
-        avg_signals = total_signals_per_row.median()
-        alarm_signal_set = set(signal_df[signal_df['Is een alarmsignaal'] == True]['Vraag'])
-        alarm_signals_per_row = filtered_data['signals'].apply(lambda x: sum(1 for s in x if s in alarm_signal_set) if isinstance(x, list) else 0)
-        avg_alarm_signals = alarm_signals_per_row.median()
-        analysis_result = f"Mediaan aantal signalen: {avg_signals:.2f}\n Mediaan aantal alarmsignalen: {avg_alarm_signals:.2f}"
-        return analysis_result
+    if any(word in specific_question for word in ['signalen', 'signaal']):
+        if subdomein is None:
+            total_signals_per_row = filtered_data['signals'].apply(lambda x: len(x) if isinstance(x, list) else 0)
+            avg_signals = total_signals_per_row.median()
+            alarm_signal_set = set(signal_df[signal_df['Is een alarmsignaal'] == True]['Vraag'])
+            alarm_signals_per_row = filtered_data['signals'].apply(lambda x: sum(1 for s in x if s in alarm_signal_set) if isinstance(x, list) else 0)
+            avg_alarm_signals = alarm_signals_per_row.median()
+            analysis_result = f"Mediaan aantal signalen: {avg_signals:.2f}\n Mediaan aantal alarmsignalen: {avg_alarm_signals:.2f}"
+            return analysis_result
+        else:
+            relevant_signals = set(signal_df[signal_df['Subdomein'] == subdomein]['Vraag'])
+            total_signals_per_row = filtered_data['signals'].apply(
+                lambda x: sum(1 for s in x if s in relevant_signals) if isinstance(x, list) else 0)
+            avg_signals = total_signals_per_row.median()
+            relevant_alarm_signals = set(signal_df[(signal_df['Subdomein'] == subdomein) & (signal_df['Is een alarmsignaal'] == True)]['Vraag'])
+            alarm_signals_per_row = filtered_data['signals'].apply(
+                lambda x: sum(1 for s in x if s in relevant_alarm_signals) if isinstance(x, list) else 0)
+            avg_alarm_signals = alarm_signals_per_row.median()
+            analysis_result = f"Mediaan aantal signalen in {subdomein}: {avg_signals:.2f}\n Mediaan aantal alarmsignalen: {avg_alarm_signals:.2f}"
+            return analysis_result
     else:
-        relevant_signals = set(signal_df[signal_df['Subdomein'] == subdomein]['Vraag'])
-        total_signals_per_row = filtered_data['signals'].apply(
-            lambda x: sum(1 for s in x if s in relevant_signals) if isinstance(x, list) else 0)
-        avg_signals = total_signals_per_row.median()
-        relevant_alarm_signals = set(signal_df[(signal_df['Subdomein'] == subdomein) & (signal_df['Is een alarmsignaal'] == True)]['Vraag'])
-        alarm_signals_per_row = filtered_data['signals'].apply(
-            lambda x: sum(1 for s in x if s in relevant_alarm_signals) if isinstance(x, list) else 0)
-        avg_alarm_signals = alarm_signals_per_row.median()
-        analysis_result = f"Mediaan aantal signalen in {subdomein}: {avg_signals:.2f}\n Mediaan aantal alarmsignalen: {avg_alarm_signals:.2f}"
+        aantal = len(filtered_data)
+        analysis_result = f"Dit geldt voor {aantal} kinderen."
         return analysis_result
 
 def combo_atleast(data: pd.DataFrame, specific_question: str, signal_df: pd.DataFrame) -> pd.DataFrame:
@@ -1037,6 +1070,10 @@ def combo_atleast(data: pd.DataFrame, specific_question: str, signal_df: pd.Data
         else:
             analysis_result = f"Er zijn {avg_signals} kinderen met ten minste {threshold} signalen. Dat is {percentage}% van de totale dataset.\n"
             return analysis_result
+    if 'signalen' not in specific_question:
+        aantal = (data['positive'].apply(len) > threshold).sum()
+        analysis_result = f"Er zijn {aantal} kinderen die ten minste {threshold} keer boven de cutoff scoren voor een ontwikkelingsprobleem."
+    
     else:
         relevant_signals = set(signal_df[signal_df['Subdomein'] == subdomein]['Vraag'])
         total_signals_per_row = filtered_data['signals'].apply(
@@ -1409,21 +1446,18 @@ def time_element(data: pd.DataFrame, specific_question, signal_df: pd.DataFrame)
 
 def time_data(data: pd.DataFrame, specific_question, signal_df: pd.DataFrame) -> str:
     data = filter_data(data, specific_question)
+    months = extract_month_from_question(specific_question)
+    if months is None:
+        months = 6
+    data['month'] = data['timestamp'].dt.to_period('M')
+    latest_timestamp = data['timestamp'].max()
+    cutoff_timestamp = latest_timestamp - pd.DateOffset(months=months)
+    filtered_data = data[data['timestamp'] >= cutoff_timestamp]
     if any(word in specific_question for word in ['per maand', 'maandelijks']):
-        months = extract_month_from_question(specific_question)
-        data['month'] = data['timestamp'].dt.to_period('M')
-        latest_timestamp = data['timestamp'].max()
-        cutoff_timestamp = latest_timestamp - pd.DateOffset(months=months)
-        filtered_data = data[data['timestamp'] >= cutoff_timestamp]
         monthly_counts = filtered_data.groupby('month').size()
         monthly_counts.index.name = 'Maand'
         return monthly_counts.sort_values()
-    else:
-        months = extract_month_from_question(specific_question)
-        data['month'] = data['timestamp'].dt.to_period('M')
-        latest_timestamp = data['timestamp'].max()
-        cutoff_timestamp = latest_timestamp - pd.DateOffset(months=months)
-        filtered_data = data[data['timestamp'] >= cutoff_timestamp]
+    else:  
         new_data_count = len(filtered_data)
         analysis_results = f"In de laatste {months} maanden zijn er {new_data_count} nieuwe datapunten geregistreerd.\n"
         return analysis_results

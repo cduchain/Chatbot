@@ -45,7 +45,9 @@ def filter_question(specific_question):
         "zeven": "7",
         "acht": "8",
         "negen": "9",
-        "tien": "10"}
+        "tien": "10",
+        "Welk percentage":"Hoeveel",
+        "tenminste": "ten minste"}
     for word, replacement in replacements.items():
         specific_question = re.sub(rf"\b{re.escape(word)}\b", replacement, specific_question)
     

@@ -44,7 +44,7 @@ def run_main_streamlit(
     'combo_function': 'Wat zijn de meest/minst aangeduide signalen/elementen voor de leeftijd x-x maanden, relatie x, ontwikkelingsprobleem x en subdomein x in domein x? + Uit welke (sub)domeinen komen de meeste vragen?',
     'combo_signal' : 'Welke signalen komeen meer/minder dan x% van de tijd smaen voor? Welke signalen komen minst/vaakst samen voor?',
     'how_many_alarm': 'Hoeveel kinderen vertonen ten minste X alarmsignaal?',
-    'combo_howmany': 'Hoeveel signalen vertonen kinderen gemiddeld, afhankelijk van gekozen elementen?',
+    'combo_howmany': 'Hoeveel signalen vertonen kinderen gemiddeld, afhankelijk van gekozen elementen? of Voor hoeveel kinderen gelden die specifieke elementen?',
     'combo_correlations' : 'Wat is de correlatie tussen de specifiek type van element en leeftijd?',
     'time_more': 'Welke signalen zijn in de afgelopen X maanden vaker/minder gemeld dan voorheen? + filteren op types van elementen',
     'time_evolutie_element' : 'Zijn er elementen die vaker gekozen worden sinds X maanden geleden?',
@@ -78,11 +78,12 @@ def run_main_streamlit(
     end_time_load = time.perf_counter()
     specific_question = st.text_input("Hallo! Waarmee kan ik jou helpen?")
     start_time_2 = time.perf_counter()
-    category = determine_question_type(specific_question)
+    
     
     if specific_question:
         specific_question = specific_question.lower()
         specific_question = filter_question(specific_question)
+        category = determine_question_type(specific_question)
         st.write(f'herschreven vraag: {specific_question}')
         if category == "other":
             clf = clf_both
@@ -110,7 +111,7 @@ def run_main_streamlit(
             
 
         if category == 'other':
-            confidence_threshold = 0.8
+            confidence_threshold = 0.7
             X_keywords = vectorizer.transform([specific_question])
             X = X_keywords
 
@@ -125,7 +126,7 @@ def run_main_streamlit(
             st.write(f"Waarom deze functie? De chatbot vond de volgende belangrijke woorden in jouw vraag: {', '.join(important_words)}\n")
 
             if max_prob < confidence_threshold:
-                st.write("**ik ben niet zeker welke funnctie bij je vraag past**")
+                st.write("**ik ben niet zeker welke functie bij je vraag past**")
 
         end_time_2 = time.perf_counter()
         elapsed_time_2 = end_time_2 - start_time_2
