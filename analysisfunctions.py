@@ -1056,41 +1056,42 @@ def combo_atleast(data: pd.DataFrame, specific_question: str, signal_df: pd.Data
     filtered_data = filter_data(data, specific_question)
     subdomein = extract_subdomain_from_question(specific_question)
     threshold = extract_number_after_minimum(specific_question)
-    if subdomein is None:
-        total_signals_per_row = filtered_data['signals'].apply(lambda x: len(x) if isinstance(x, list) else 0)
-        avg_signals = total_signals_per_row[total_signals_per_row >= threshold].count()
-        percentage = avg_signals/total_rows*100
-        if any(word in specific_question for word in ['alarmsignaal', 'alarmsignalen']):
-            alarm_signal_set = set(signal_df[signal_df['Is een alarmsignaal'] == True]['Vraag'])
-            alarm_signals_per_row = filtered_data['signals'].apply(lambda x: sum(1 for s in x if s in alarm_signal_set) if isinstance(x, list) else 0)
-            avg_alarm_signals = alarm_signals_per_row[alarm_signals_per_row >= threshold].count()
-            percentage = avg_alarm_signals/total_rows*100
-            analysis_result = f"Er zijn {avg_alarm_signals} kinderen met ten minste {threshold} alarmsignalen. Dat is {percentage}% van de totale dataset.\n"
-            return analysis_result
-        else:
-            analysis_result = f"Er zijn {avg_signals} kinderen met ten minste {threshold} signalen. Dat is {percentage}% van de totale dataset.\n"
-            return analysis_result
     if 'signalen' not in specific_question:
         aantal = (data['positive'].apply(len) > threshold).sum()
         analysis_result = f"Er zijn {aantal} kinderen die ten minste {threshold} keer boven de cutoff scoren voor een ontwikkelingsprobleem."
-    
+        return analysis_result
     else:
-        relevant_signals = set(signal_df[signal_df['Subdomein'] == subdomein]['Vraag'])
-        total_signals_per_row = filtered_data['signals'].apply(
-            lambda x: sum(1 for s in x if s in relevant_signals) if isinstance(x, list) else 0)
-        avg_signals = total_signals_per_row[total_signals_per_row >= threshold].count()
-        percentage = avg_signals/total_rows*100
-        if any(word in specific_question for word in ['alarmsignaal', 'alarmsingalen']):
-            relevant_alarm_signals = set(signal_df[(signal_df['Subdomein'] == subdomein) & (signal_df['Is een alarmsignaal'] == True)]['Vraag'])
-            alarm_signals_per_row = filtered_data['signals'].apply(
-                lambda x: sum(1 for s in x if s in relevant_alarm_signals) if isinstance(x, list) else 0)
-            avg_alarm_signals = alarm_signals_per_row[alarm_signals_per_row >= threshold].count()
-            percentage = avg_alarm_signals/total_rows*100
-            analysis_result = f"Er zijn {avg_alarm_signals} kinderen met ten minste {threshold} alarmsignalen. Dat is {percentage}% van de totale dataset.\n"
-            return analysis_result
-        else: 
-            analysis_result = f"Er zijn {avg_signals} kinderen met ten minste {threshold} signalen. Dat is {percentage}% van de totale dataset.\n"
-            return analysis_result
+        if subdomein is None:
+            total_signals_per_row = filtered_data['signals'].apply(lambda x: len(x) if isinstance(x, list) else 0)
+            avg_signals = total_signals_per_row[total_signals_per_row >= threshold].count()
+            percentage = avg_signals/total_rows*100
+            if any(word in specific_question for word in ['alarmsignaal', 'alarmsignalen']):
+                alarm_signal_set = set(signal_df[signal_df['Is een alarmsignaal'] == True]['Vraag'])
+                alarm_signals_per_row = filtered_data['signals'].apply(lambda x: sum(1 for s in x if s in alarm_signal_set) if isinstance(x, list) else 0)
+                avg_alarm_signals = alarm_signals_per_row[alarm_signals_per_row >= threshold].count()
+                percentage = avg_alarm_signals/total_rows*100
+                analysis_result = f"Er zijn {avg_alarm_signals} kinderen met ten minste {threshold} alarmsignalen. Dat is {percentage}% van de totale dataset.\n"
+                return analysis_result
+            else:
+                analysis_result = f"Er zijn {avg_signals} kinderen met ten minste {threshold} signalen. Dat is {percentage}% van de totale dataset.\n"
+                return analysis_result
+        else:
+            relevant_signals = set(signal_df[signal_df['Subdomein'] == subdomein]['Vraag'])
+            total_signals_per_row = filtered_data['signals'].apply(
+                lambda x: sum(1 for s in x if s in relevant_signals) if isinstance(x, list) else 0)
+            avg_signals = total_signals_per_row[total_signals_per_row >= threshold].count()
+            percentage = avg_signals/total_rows*100
+            if any(word in specific_question for word in ['alarmsignaal', 'alarmsingalen']):
+                relevant_alarm_signals = set(signal_df[(signal_df['Subdomein'] == subdomein) & (signal_df['Is een alarmsignaal'] == True)]['Vraag'])
+                alarm_signals_per_row = filtered_data['signals'].apply(
+                    lambda x: sum(1 for s in x if s in relevant_alarm_signals) if isinstance(x, list) else 0)
+                avg_alarm_signals = alarm_signals_per_row[alarm_signals_per_row >= threshold].count()
+                percentage = avg_alarm_signals/total_rows*100
+                analysis_result = f"Er zijn {avg_alarm_signals} kinderen met ten minste {threshold} alarmsignalen. Dat is {percentage}% van de totale dataset.\n"
+                return analysis_result
+            else: 
+                analysis_result = f"Er zijn {avg_signals} kinderen met ten minste {threshold} signalen. Dat is {percentage}% van de totale dataset.\n"
+                return analysis_result
 
 def combo_comparison(data: pd.DataFrame, specific_question: str, signal_df: pd.DataFrame, clf, vectorizer, encoder) -> pd.DataFrame:
     question = vectorizer.transform([specific_question])
