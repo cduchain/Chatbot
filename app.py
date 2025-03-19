@@ -92,7 +92,9 @@ def run_main_streamlit(
         
         filtered_data = filter_data(data, specific_question)
         if category == "verbanden":   
-            if any(word in specific_question for word in ['hoeveel', 'aantal']):
+            if 'per leeftijd' in specific_question:
+                analysis_function_name = 'signal_range'
+            elif any(word in specific_question for word in ['hoeveel', 'aantal']):
                 analysis_function_name = 'combo_howmany'
             elif any(word in specific_question for word in ['ten minste', 'minstens', 'minimum']):
                 analysis_function_name = 'combo_atleast'
