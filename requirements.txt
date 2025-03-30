@@ -5,3 +5,6 @@ joblib
 scipy
 streamlit
 typing
+torch
+transformers
+accelerate
