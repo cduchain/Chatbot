@@ -18,7 +18,8 @@ label_encoder_func_both = load('label_encoder_func_both.joblib')
 clf_comp = load('decision_tree_comp.joblib')
 vectorizer_comp = load('tfidf_vectorizer_comp.joblib')
 encoder_comp = load('label_encoder_func_comp.joblib')
-       
+hf_token = st.secrets["huggingface"]["token"]
+
 def run_main_streamlit(
     model_name: str = "meta-llama/Llama-3.2-1B-Instruct",  
     data_file: str = "data_file.csv",
@@ -55,8 +56,8 @@ def run_main_streamlit(
     
     @st.cache_resource
     def load_model(model_name):
-        tokenizer = AutoTokenizer.from_pretrained(model_name)
-        model = AutoModelForCausalLM.from_pretrained(model_name, device_map="auto", offload_folder="model")
+        tokenizer = AutoTokenizer.from_pretrained(model_name, use_auth_token=hf_token)
+        model = AutoModelForCausalLM.from_pretrained(model_name, device_map="auto", offload_folder="model", use_auth_token=hf_token)
         return tokenizer, model
     tokenizer, model = load_model(model_name)
     
