@@ -61,8 +61,8 @@ def run_main_streamlit(
     
     @st.cache_resource
     def load_model(model_name):
-        tokenizer = AutoTokenizer.from_pretrained(model_name, use_auth_token=hf_token)
-        model = AutoModelForCausalLM.from_pretrained(model_name, device_map="auto", offload_folder="model", use_auth_token=hf_token)
+        tokenizer = AutoTokenizer.from_pretrained(model_name, token=hf_token)
+        model = AutoModelForCausalLM.from_pretrained(model_name, device_map="auto", offload_folder="model", token=hf_token)
         return tokenizer, model
     tokenizer, model = load_model(model_name)
     
