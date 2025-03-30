@@ -10,6 +10,7 @@ from itertools import combinations
 import logging
 import os
 import scipy.stats as stats
+import numpy as np
 
 
 clf_both = load('decision_tree_both.joblib')
@@ -18,7 +19,11 @@ label_encoder_func_both = load('label_encoder_func_both.joblib')
 clf_comp = load('decision_tree_comp.joblib')
 vectorizer_comp = load('tfidf_vectorizer_comp.joblib')
 encoder_comp = load('label_encoder_func_comp.joblib')
-hf_token = st.secrets["huggingface"]["token"]
+try:
+    hf_token = st.secrets["huggingface"]["token"]
+except KeyError:
+    st.error("Hugging Face token not found. Please check secrets.toml.")
+    st.stop()
 
 def run_main_streamlit(
     model_name: str = "meta-llama/Llama-3.2-1B-Instruct",  
